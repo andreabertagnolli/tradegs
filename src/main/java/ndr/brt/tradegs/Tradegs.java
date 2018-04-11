@@ -2,6 +2,7 @@ package ndr.brt.tradegs;
 
 import spark.servlet.SparkApplication;
 
+import static ndr.brt.tradegs.Commands.commands;
 import static spark.Spark.post;
 
 public class Tradegs implements SparkApplication {
@@ -10,7 +11,7 @@ public class Tradegs implements SparkApplication {
 
     @SuppressWarnings("unused")
     public Tradegs() {
-        this(Commands.commands());
+        this(commands());
     }
 
     public Tradegs(Commands commands) {

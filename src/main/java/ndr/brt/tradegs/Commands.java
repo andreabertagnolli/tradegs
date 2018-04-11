@@ -1,16 +1,20 @@
 package ndr.brt.tradegs;
 
 public interface Commands {
+
     static Commands commands() {
         return new Instance();
     }
 
-    void post(Command command);
+    <T extends Command> void post(Command command);
 
     class Instance implements Commands {
-        @Override
-        public void post(Command command) {
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends Command> void post(Command command) {
+            Handler handler = new CreateUserHandler();
+            handler.handle(command);
         }
     }
 }

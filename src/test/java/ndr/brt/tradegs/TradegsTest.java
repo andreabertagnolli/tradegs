@@ -4,20 +4,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyMap;
 import static ndr.brt.tradegs.Json.toJson;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 import static spark.Spark.port;
 
 class TradegsTest {
 
     private static final int PORT = 19283;
     private Commands commands = mock(Commands.class);
+    private Tradegs app = new Tradegs(commands);
 
     @BeforeAll
     static void initSpark() {
@@ -26,7 +23,7 @@ class TradegsTest {
 
     @BeforeEach
     void setUp() {
-        new Tradegs(commands).init();
+        app.init();
     }
 
     @Test
