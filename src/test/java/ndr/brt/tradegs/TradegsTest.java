@@ -3,15 +3,15 @@ package ndr.brt.tradegs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import spark.Spark;
+
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static java.util.Collections.emptyMap;
 import static ndr.brt.tradegs.Json.toJson;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static spark.Spark.port;
 
 class TradegsTest {
@@ -39,5 +39,17 @@ class TradegsTest {
             .statusCode(200);
 
         verify(commands).post(new CreateUser("user"));
+    }
+
+    @Test
+    void when_id_is_missing_returns_bad_request() {
+        given()
+            .port(PORT)
+            .body(Json.toJson(emptyMap()))
+            .post("users")
+        .then()
+            .statusCode(500);
+
+        verifyZeroInteractions(commands);
     }
 }

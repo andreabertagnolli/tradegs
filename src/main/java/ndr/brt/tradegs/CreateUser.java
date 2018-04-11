@@ -1,6 +1,7 @@
 package ndr.brt.tradegs;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class CreateUser implements Command {
 
@@ -8,6 +9,10 @@ public class CreateUser implements Command {
 
     public CreateUser(String id) {
         this.id = id;
+    }
+
+    public Optional<String> id() {
+        return Optional.ofNullable(id);
     }
 
     @Override
