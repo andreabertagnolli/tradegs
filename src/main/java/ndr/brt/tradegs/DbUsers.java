@@ -12,7 +12,7 @@ public enum DbUsers implements Users {
     }
 
     @Override
-    public Optional<User> get(String user) {
-        return Optional.empty();
+    public User get(String user) {
+        return new User();
     }
 }

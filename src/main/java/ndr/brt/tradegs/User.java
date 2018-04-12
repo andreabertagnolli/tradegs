@@ -19,4 +19,8 @@ public class User {
     private void apply(UserCreated event) {
         this.id = event.id();
     }
+
+    public boolean exists() {
+        return id != null;
+    }
 }

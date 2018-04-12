@@ -14,15 +14,13 @@ public class CreateUserHandler implements Handler<CreateUser> {
 
     @Override
     public void handle(CreateUser command) {
-        users.get(command.id().get())
-                .ifPresentOrElse(
-                        it -> {},
-                        () -> {
-                            User user = new User();
-                            user.created(command.id().get());
-                            users.save(user);
-                        }
-                );
+        String id = command.id().get();
+        User user = users.get(id);
+
+        if (!user.exists()) {
+            user.created(id);
+            users.save(user);
+        }
 
     }
 }

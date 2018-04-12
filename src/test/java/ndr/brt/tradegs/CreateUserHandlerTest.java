@@ -20,7 +20,7 @@ class CreateUserHandlerTest {
 
     @Test
     void save_user() {
-        when(users.get("user")).thenReturn(empty());
+        when(users.get("user")).thenReturn(new User());
 
         handler.handle(new CreateUser("user"));
 
@@ -29,7 +29,9 @@ class CreateUserHandlerTest {
 
     @Test
     void when_user_already_exists_does_nothing() {
-        when(users.get("user")).thenReturn(Optional.of(new User()));
+        User user = new User();
+        user.created("user");
+        when(users.get("user")).thenReturn(user);
 
         handler.handle(new CreateUser("user"));
 
