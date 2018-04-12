@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 class CreateUserHandlerTest {
@@ -25,7 +24,7 @@ class CreateUserHandlerTest {
 
         handler.handle(new CreateUser("user"));
 
-        verify(users).save(isA(User.class));
+        verify(users).save(argThat(user -> "user".equals(user.id())));
     }
 
     @Test

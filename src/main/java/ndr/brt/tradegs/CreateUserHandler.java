@@ -17,7 +17,11 @@ public class CreateUserHandler implements Handler<CreateUser> {
         users.get(command.id().get())
                 .ifPresentOrElse(
                         it -> {},
-                        () -> users.save(new User())
+                        () -> {
+                            User user = new User();
+                            user.created(command.id().get());
+                            users.save(user);
+                        }
                 );
 
     }
