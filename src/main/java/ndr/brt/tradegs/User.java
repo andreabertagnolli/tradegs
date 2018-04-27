@@ -1,10 +1,14 @@
 package ndr.brt.tradegs;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class User {
 
     private String id;
+    private List<Event> changes = new ArrayList<>();
 
     public String id() {
         return id;
@@ -14,6 +18,16 @@ public class User {
         UserCreated event = new UserCreated(id);
 
         apply(event);
+        changes.add(event);
+    }
+
+    <T extends Event> void apply(T event) {
+        switch (event.type()) {
+            case "UserCreated":
+                apply(UserCreated.class.cast(event));
+                break;
+            default: throw new RuntimeException("Unknown event type: " + event.getClass().getComponentType());
+        }
     }
 
     private void apply(UserCreated event) {
@@ -22,6 +36,10 @@ public class User {
 
     public boolean exists() {
         return id != null;
+    }
+
+    public Stream<Event> changes() {
+        return changes.stream();
     }
 
     @Override
