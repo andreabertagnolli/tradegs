@@ -21,7 +21,7 @@ public class User {
         changes.add(event);
     }
 
-    <T extends Event> void apply(T event) {
+    void apply(Event event) {
         switch (event.type()) {
             case "UserCreated":
                 apply(UserCreated.class.cast(event));
