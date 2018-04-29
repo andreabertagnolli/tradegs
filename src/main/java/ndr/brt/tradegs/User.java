@@ -61,4 +61,8 @@ public class User {
                 "id='" + id + '\'' +
                 '}';
     }
+
+    public void clearChanges() {
+        changes.clear();
+    }
 }

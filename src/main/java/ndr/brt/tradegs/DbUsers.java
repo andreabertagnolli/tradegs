@@ -33,6 +33,7 @@ public enum DbUsers implements Users {
                 .collect(Collectors.toList());
 
         users.insertMany(changes);
+        user.clearChanges();
     }
 
     @Override

@@ -10,10 +10,15 @@ public interface Commands {
 
     class Instance implements Commands {
 
+        private Handler handler;
+
+        public Instance() {
+            handler = new CreateUserHandler();
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         public <T extends Command> void post(Command command) {
-            Handler handler = new CreateUserHandler();
             handler.handle(command);
         }
     }
