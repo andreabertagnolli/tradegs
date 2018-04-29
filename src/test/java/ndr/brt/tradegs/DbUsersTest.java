@@ -1,54 +1,89 @@
 package ndr.brt.tradegs;
 
+import com.rabbitmq.client.*;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeoutException;
 
+import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DbUsersTest {
 
     private MongodProcess mongod;
+    private EmbeddedRabbitBroker rabbit;
+    private BlockingQueue<String> events = new ArrayBlockingQueue<>(1);
 
     @BeforeEach
     void setUp() throws IOException {
-        IMongodConfig mongodConfig = new MongodConfigBuilder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
-                .build();
+        rabbit = new EmbeddedRabbitBroker();
+        rabbit.start();
 
         mongod = MongodStarter.getDefaultInstance()
-                .prepare(mongodConfig)
+                .prepare(new MongodConfigBuilder()
+                        .version(Version.Main.PRODUCTION)
+                        .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
+                        .build())
                 .start();
     }
 
     @AfterEach
     void tearDown() {
         mongod.stop();
+        rabbit.stop();
     }
 
     @Test
-    void save_and_retrieve_user() {
+    void save_and_retrieve_user() throws InterruptedException {
         User user = new User();
         user.created("sattad");
 
         DbUsers users = DbUsers.DbUsers;
+        pollEventsTo(events);
 
         users.save(user);
 
         assertThat(users.get("sattad"), is(user));
         assertThat(user.changes().count(), is(0L));
+        UserCreated event = Json.fromJson(events.poll(5, SECONDS), UserCreated.class);
+        assertThat(event.id(), is("sattad"));
+    }
+
+    private void pollEventsTo(BlockingQueue<String> queue) {
+        try {
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+            connectionFactory.setHost("localhost");
+            connectionFactory.setUsername("guest");
+            connectionFactory.setPassword("guest");
+            Connection connection = connectionFactory.newConnection();
+            Channel channel = connection.createChannel();
+            channel.queueDeclare("test", false, false, true, null);
+            channel.queueBind("test", "tradegs", "user.created");
+            channel.basicConsume("test", new DefaultConsumer(channel) {
+                @Override
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                    try {
+                        queue.put(new String(body));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
