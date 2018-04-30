@@ -14,11 +14,12 @@ public class User {
         return id;
     }
 
-    public void created(String id) {
+    public User created(String id) {
         UserCreated event = new UserCreated(id);
 
         apply(event);
         changes.add(event);
+        return this;
     }
 
     void apply(Event event) {

@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeoutException;
 
-import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,6 +24,7 @@ class DbUsersTest {
     private MongodProcess mongod;
     private EmbeddedRabbitBroker rabbit;
     private BlockingQueue<String> events = new ArrayBlockingQueue<>(1);
+    private DbUsers users;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -38,6 +37,9 @@ class DbUsersTest {
                         .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
                         .build())
                 .start();
+
+        users = DbUsers.DbUsers;
+        pollEventsTo(events);
     }
 
     @AfterEach
@@ -48,11 +50,8 @@ class DbUsersTest {
 
     @Test
     void save_and_retrieve_user() throws InterruptedException {
-        User user = new User();
-        user.created("sattad");
-
-        DbUsers users = DbUsers.DbUsers;
-        pollEventsTo(events);
+        User user = new User()
+                .created("sattad");
 
         users.save(user);
 

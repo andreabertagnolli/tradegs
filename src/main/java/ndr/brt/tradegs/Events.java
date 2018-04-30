@@ -1,11 +1,9 @@
 package ndr.brt.tradegs;
 
-import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
 
