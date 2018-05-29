@@ -1,5 +1,7 @@
 package ndr.brt.tradegs;
 
+import ndr.brt.tradegs.user.CreateUserHandler;
+
 public interface Commands {
 
     static Commands commands() {

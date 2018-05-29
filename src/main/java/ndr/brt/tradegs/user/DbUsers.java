@@ -1,17 +1,18 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
+import ndr.brt.tradegs.Event;
+import ndr.brt.tradegs.Events;
+import ndr.brt.tradegs.Json;
 import org.bson.Document;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static ndr.brt.tradegs.Event.classOf;
 
 public enum DbUsers implements Users {
 
@@ -47,7 +48,7 @@ public enum DbUsers implements Users {
         User user = new User();
 
         users.find(new Document("id", id)).forEach((Block<Document>) it -> {
-                Class<? extends Event> clazz = classOf(it.get("type", String.class));
+                Class<? extends Event> clazz = Event.classOf(it.get("type", String.class));
                 Event event = Json.fromJson(it.toJson(), clazz);
                 user.apply(event);
             });

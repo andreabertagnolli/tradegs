@@ -1,5 +1,6 @@
 package ndr.brt.tradegs;
 
+import ndr.brt.tradegs.user.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

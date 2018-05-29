@@ -1,4 +1,6 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
+
+import ndr.brt.tradegs.Command;
 
 import java.util.Objects;
 import java.util.Optional;

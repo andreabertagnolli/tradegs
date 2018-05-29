@@ -1,4 +1,6 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
+
+import ndr.brt.tradegs.Event;
 
 import java.util.ArrayList;
 import java.util.List;

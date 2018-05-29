@@ -1,4 +1,6 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
+
+import ndr.brt.tradegs.Handler;
 
 public class CreateUserHandler implements Handler<CreateUser> {
 

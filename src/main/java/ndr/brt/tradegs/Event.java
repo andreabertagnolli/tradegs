@@ -8,7 +8,7 @@ public class Event {
 
     private static Map<String, Class<? extends Event>> eventClasses = new HashMap<>();
 
-    static Class<? extends Event> classOf(String className) {
+    public static Class<? extends Event> classOf(String className) {
         return eventClasses.get(className);
     }
 
