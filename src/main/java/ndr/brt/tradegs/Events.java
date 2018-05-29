@@ -6,6 +6,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
 
 import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
+import static ndr.brt.tradegs.RabbitConnection.rabbitConnection;
 
 public interface Events {
     static Events events() {
@@ -19,12 +20,8 @@ public interface Events {
         private final Channel channel;
 
         public Instance() {
-            ConnectionFactory connectionFactory = new ConnectionFactory();
-            connectionFactory.setHost("localhost");
-            connectionFactory.setUsername("guest");
-            connectionFactory.setPassword("guest");
             try {
-                channel = connectionFactory.newConnection().createChannel();
+                channel = rabbitConnection().createChannel();
                 channel.exchangeDeclare("tradegs", TOPIC);
             } catch (Exception e) {
                 throw new RuntimeException(e);

@@ -19,6 +19,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static ndr.brt.tradegs.RabbitConnection.rabbitConnection;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -66,12 +67,7 @@ class DbUsersTest {
 
     private void pollEventsTo(BlockingQueue<String> queue) {
         try {
-            ConnectionFactory connectionFactory = new ConnectionFactory();
-            connectionFactory.setHost("localhost");
-            connectionFactory.setUsername("guest");
-            connectionFactory.setPassword("guest");
-            Connection connection = connectionFactory.newConnection();
-            Channel channel = connection.createChannel();
+            Channel channel = rabbitConnection().createChannel();
             channel.queueDeclare("test", false, false, true, null);
             channel.queueBind("test", "tradegs", "user.created");
             channel.basicConsume("test", new DefaultConsumer(channel) {
