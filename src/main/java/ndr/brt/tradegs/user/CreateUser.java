@@ -2,7 +2,6 @@ package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Command;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class CreateUser extends Command {
@@ -17,16 +16,4 @@ public class CreateUser extends Command {
         return Optional.ofNullable(id);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CreateUser that = (CreateUser) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
