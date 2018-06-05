@@ -33,7 +33,7 @@ class UserCreatedListenerTest {
     }
 
     @Test
-    void launch_start_fetch_command() {
+    void launch_fetch_inventory_command() {
         Events.events().publish(toJson(new UserCreated("user")));
 
         listener.run();

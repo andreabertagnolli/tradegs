@@ -6,10 +6,6 @@ public class CreateUserHandler implements Handler<CreateUser> {
 
     private final Users users;
 
-    public CreateUserHandler() {
-        this(DbUsers.DbUsers);
-    }
-
     public CreateUserHandler(Users users) {
         this.users = users;
     }

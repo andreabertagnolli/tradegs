@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Event;
+import ndr.brt.tradegs.inventory.Listing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class User {
 
     private String id;
     private List<Event> changes = new ArrayList<>();
+    private boolean inventoryFetched = false;
 
     public String id() {
         return id;
@@ -24,10 +26,20 @@ public class User {
         return this;
     }
 
+    public void inventoryFetched(List<Listing> listings) {
+        InventoryFetched event = new InventoryFetched(id, listings);
+
+        apply(event);
+        changes.add(event);
+    }
+
     void apply(Event event) {
         switch (event.type()) {
             case "UserCreated":
                 apply(UserCreated.class.cast(event));
+                break;
+            case "InventoryFetched":
+                apply(InventoryFetched.class.cast(event));
                 break;
             default: throw new RuntimeException("Unknown event type: " + event.getClass().getComponentType());
         }
@@ -35,6 +47,10 @@ public class User {
 
     private void apply(UserCreated event) {
         this.id = event.id();
+    }
+
+    private void apply(InventoryFetched event) {
+        this.inventoryFetched = true;
     }
 
     public boolean exists() {
@@ -67,5 +83,9 @@ public class User {
 
     public void clearChanges() {
         changes.clear();
+    }
+
+    public boolean hasInventoryFetched() {
+        return inventoryFetched;
     }
 }

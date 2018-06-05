@@ -1,9 +1,6 @@
 package ndr.brt.tradegs;
 
-import ndr.brt.tradegs.user.CreateUser;
-import ndr.brt.tradegs.user.CreateUserHandler;
-import ndr.brt.tradegs.user.FetchInventory;
-import ndr.brt.tradegs.user.FetchInventoryHandler;
+import ndr.brt.tradegs.user.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,8 +19,8 @@ public interface Commands {
 
         private Instance() {
             handlers = Map.of(
-                    CreateUser.class, new CreateUserHandler(),
-                    FetchInventory.class, new FetchInventoryHandler()
+                    CreateUser.class, new CreateUserHandler(DbUsers.DbUsers),
+                    FetchInventory.class, new FetchInventoryHandler(null, DbUsers.DbUsers) // TODO: implement inventory!
             );
         }
 

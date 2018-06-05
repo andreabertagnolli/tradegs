@@ -8,4 +8,8 @@ public class FetchInventory extends Command {
     public FetchInventory(String userId) {
         this.userId = userId;
     }
+
+    public String userId() {
+        return userId;
+    }
 }
