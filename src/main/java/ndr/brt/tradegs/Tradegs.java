@@ -31,6 +31,8 @@ public class Tradegs implements SparkApplication {
                 return "User id not specified";
             }
         });
+
+        new StartFetchListener(commands).run();
     }
 
 }
