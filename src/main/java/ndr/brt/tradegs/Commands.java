@@ -2,8 +2,8 @@ package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.user.CreateUser;
 import ndr.brt.tradegs.user.CreateUserHandler;
-import ndr.brt.tradegs.user.StartFetch;
-import ndr.brt.tradegs.user.StartFetchHandler;
+import ndr.brt.tradegs.user.FetchInventory;
+import ndr.brt.tradegs.user.FetchInventoryHandler;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +23,7 @@ public interface Commands {
         private Instance() {
             handlers = Map.of(
                     CreateUser.class, new CreateUserHandler(),
-                    StartFetch.class, new StartFetchHandler()
+                    FetchInventory.class, new FetchInventoryHandler()
             );
         }
 

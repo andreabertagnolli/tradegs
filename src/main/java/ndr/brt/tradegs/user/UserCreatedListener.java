@@ -1,7 +1,10 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
 
 import com.rabbitmq.client.*;
-import ndr.brt.tradegs.user.StartFetch;
+import ndr.brt.tradegs.Commands;
+import ndr.brt.tradegs.Json;
+import ndr.brt.tradegs.RabbitConnection;
+import ndr.brt.tradegs.user.FetchInventory;
 import ndr.brt.tradegs.user.UserCreated;
 
 import java.io.IOException;
@@ -9,12 +12,12 @@ import java.util.Optional;
 
 import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
 
-public class StartFetchListener implements Runnable {
+public class UserCreatedListener implements Runnable {
 
     private final Commands commands;
     private final Channel channel;
 
-    public StartFetchListener(Commands commands) {
+    public UserCreatedListener(Commands commands) {
         this.commands = commands;
         try {
             channel = RabbitConnection.rabbitConnection().createChannel();
@@ -36,7 +39,7 @@ public class StartFetchListener implements Runnable {
                             .map(String::new)
                             .map(it -> Json.fromJson(it, UserCreated.class))
                             .map(UserCreated::id)
-                            .map(StartFetch::new)
+                            .map(FetchInventory::new)
                             .ifPresent(commands::post);
                 }
             });
