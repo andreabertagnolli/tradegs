@@ -5,6 +5,7 @@ import ndr.brt.tradegs.user.StartFetch;
 import ndr.brt.tradegs.user.UserCreated;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
 
@@ -31,8 +32,12 @@ public class StartFetchListener implements Runnable {
             channel.basicConsume("startFetch", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
-                    UserCreated event = Json.fromJson(new String(body), UserCreated.class);
-                    commands.post(new StartFetch(event.id()));
+                    Optional.of(body)
+                            .map(String::new)
+                            .map(it -> Json.fromJson(it, UserCreated.class))
+                            .map(UserCreated::id)
+                            .map(StartFetch::new)
+                            .ifPresent(commands::post);
                 }
             });
         } catch (Exception e) {
