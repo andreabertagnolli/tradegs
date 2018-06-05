@@ -1,6 +1,7 @@
 package ndr.brt.tradegs;
 
 import com.rabbitmq.client.Channel;
+import ndr.brt.tradegs.user.StartFetch;
 import ndr.brt.tradegs.user.UserCreated;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,6 @@ class StartFetchListenerTest {
         listener.run();
 
         await().atMost(2, SECONDS)
-                .untilAsserted(() -> verify(commands).post(any()));
+                .untilAsserted(() -> verify(commands).post(new StartFetch("user")));
     }
 }

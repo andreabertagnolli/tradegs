@@ -5,7 +5,7 @@ import ndr.brt.tradegs.Command;
 import java.util.Objects;
 import java.util.Optional;
 
-public class CreateUser implements Command {
+public class CreateUser extends Command {
 
     private final String id;
 

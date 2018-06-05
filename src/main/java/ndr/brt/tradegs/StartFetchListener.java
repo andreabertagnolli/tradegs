@@ -1,6 +1,8 @@
 package ndr.brt.tradegs;
 
 import com.rabbitmq.client.*;
+import ndr.brt.tradegs.user.StartFetch;
+import ndr.brt.tradegs.user.UserCreated;
 
 import java.io.IOException;
 
@@ -29,8 +31,8 @@ public class StartFetchListener implements Runnable {
             channel.basicConsume("startFetch", true, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
-                    commands.post(new Command() {
-                });
+                    UserCreated event = Json.fromJson(new String(body), UserCreated.class);
+                    commands.post(new StartFetch(event.id()));
                 }
             });
         } catch (Exception e) {
