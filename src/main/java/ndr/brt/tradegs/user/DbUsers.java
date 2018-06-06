@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
 import ndr.brt.tradegs.Event;
+import ndr.brt.tradegs.EventClasses;
 import ndr.brt.tradegs.Events;
 import ndr.brt.tradegs.Json;
 import org.bson.Document;
@@ -48,7 +49,7 @@ public enum DbUsers implements Users {
         User user = new User();
 
         users.find(new Document("id", id)).forEach((Block<Document>) it -> {
-                Class<? extends Event> clazz = Event.classOf(it.get("type", String.class));
+                Class<? extends Event> clazz = EventClasses.get(it.get("type", String.class));
                 Event event = Json.fromJson(it.toJson(), clazz);
                 user.apply(event);
             });

@@ -1,15 +1,11 @@
 package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.inventory.Inventory;
-import ndr.brt.tradegs.inventory.Listing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FetchInventoryHandlerTest {
 
@@ -24,11 +20,11 @@ class FetchInventoryHandlerTest {
 
     @Test
     void fetch_inventory() {
-        when(inventory.fetch("user")).thenReturn(asList(new Listing(), new Listing()));
+        when(inventory.fetch("user")).thenReturn("inventoryId");
         when(users.get("user")).thenReturn(new User().created("user"));
 
         handler.handle(new FetchInventory("user"));
 
-        verify(users).save(argThat(User::hasInventoryFetched));
+        verify(users).save(argThat(it -> "inventoryId".equals(it.inventoryId())));
     }
 }

@@ -2,9 +2,6 @@ package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Handler;
 import ndr.brt.tradegs.inventory.Inventory;
-import ndr.brt.tradegs.inventory.Listing;
-
-import java.util.List;
 
 public class FetchInventoryHandler implements Handler<FetchInventory> {
     private final Inventory inventory;
@@ -18,10 +15,9 @@ public class FetchInventoryHandler implements Handler<FetchInventory> {
     @Override
     public void handle(FetchInventory command) {
         User user = users.get(command.userId());
-        List<Listing> listings = inventory.fetch(command.userId());
-        // TODO: inventory.fetch potrebbe arrangiarsi a salvare la fetchata ed a restituire l'id per riprendere poi tale fetchata
+        String inventoryId = inventory.fetch(command.userId());
 
-        user.inventoryFetched(listings);
+        user.inventoryFetched(inventoryId);
 
         users.save(user);
     }

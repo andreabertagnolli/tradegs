@@ -12,7 +12,7 @@ public class User {
 
     private String id;
     private List<Event> changes = new ArrayList<>();
-    private boolean inventoryFetched = false;
+    private String inventoryId;
 
     public String id() {
         return id;
@@ -26,8 +26,8 @@ public class User {
         return this;
     }
 
-    public void inventoryFetched(List<Listing> listings) {
-        InventoryFetched event = new InventoryFetched(id, listings);
+    public void inventoryFetched(String inventoryId) {
+        InventoryFetched event = new InventoryFetched(id, inventoryId);
 
         apply(event);
         changes.add(event);
@@ -50,7 +50,7 @@ public class User {
     }
 
     private void apply(InventoryFetched event) {
-        this.inventoryFetched = true;
+        this.inventoryId = event.inventoryId();
     }
 
     public boolean exists() {
@@ -59,6 +59,14 @@ public class User {
 
     public Stream<Event> changes() {
         return changes.stream();
+    }
+
+    public String inventoryId() {
+        return inventoryId;
+    }
+
+    public void clearChanges() {
+        changes.clear();
     }
 
     @Override
@@ -79,13 +87,5 @@ public class User {
         return "User{" +
                 "id='" + id + '\'' +
                 '}';
-    }
-
-    public void clearChanges() {
-        changes.clear();
-    }
-
-    public boolean hasInventoryFetched() {
-        return inventoryFetched;
     }
 }
