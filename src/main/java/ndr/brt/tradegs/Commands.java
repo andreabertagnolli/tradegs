@@ -1,5 +1,7 @@
 package ndr.brt.tradegs;
 
+import ndr.brt.tradegs.inventory.DiscogsInventory;
+import ndr.brt.tradegs.inventory.Inventory;
 import ndr.brt.tradegs.user.*;
 
 import java.util.Map;
@@ -20,7 +22,7 @@ public interface Commands {
         private Instance() {
             handlers = Map.of(
                     CreateUser.class, new CreateUserHandler(DbUsers.DbUsers),
-                    FetchInventory.class, new FetchInventoryHandler(null, DbUsers.DbUsers) // TODO: implement inventory!
+                    FetchInventory.class, new FetchInventoryHandler(new DiscogsInventory(), DbUsers.DbUsers)
             );
         }
 
