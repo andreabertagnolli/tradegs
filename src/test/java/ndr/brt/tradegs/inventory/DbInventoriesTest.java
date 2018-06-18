@@ -20,7 +20,6 @@ class DbInventoriesTest {
         EmbeddedMongoDb.initialize();
     }
 
-    @Disabled
     @Test
     void store_and_retrieve() {
         DbInventories inventories = new DbInventories();
