@@ -14,7 +14,7 @@ public class DbInventories implements Inventories {
 
     private final MongoCollection<Document> inventories;
 
-    public DbInventories() {
+    DbInventories() {
         MongoDatabase database = MongoDbConnection.database();
         database.createCollection("inventories");
         inventories = database.getCollection("inventories");
@@ -30,9 +30,9 @@ public class DbInventories implements Inventories {
 
     public List<Listing> get(String id) {
         return inventories.find(new Document("id", id))
-                .map(it -> it.toJson())
+                .map(Document::toJson)
                 .map(it -> Json.fromJson(it, InventoryData.class))
-                .map(it -> it.listings())
+                .map(InventoryData::listings)
                 .first();
     }
 }
