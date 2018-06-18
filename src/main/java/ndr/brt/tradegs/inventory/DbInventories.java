@@ -31,8 +31,8 @@ public class DbInventories implements Inventories {
     public List<Listing> get(String id) {
         return inventories.find(new Document("id", id))
                 .map(Document::toJson)
-                .map(it -> Json.fromJson(it, InventoryData.class))
-                .map(InventoryData::listings)
+                .map(it -> Json.fromJson(it, Inventory.class))
+                .map(Inventory::listings)
                 .first();
     }
 }

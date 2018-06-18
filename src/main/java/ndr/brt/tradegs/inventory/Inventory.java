@@ -1,5 +1,12 @@
 package ndr.brt.tradegs.inventory;
 
-public interface Inventory {
-    String fetch(String user);
+import java.util.List;
+
+public class Inventory {
+    private String id;
+    private List<Listing> listings;
+
+    public List<Listing> listings() {
+        return listings;
+    }
 }

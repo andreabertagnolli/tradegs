@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-class DiscogsInventoryTest {
+class DiscogsInventoryClientTest {
 
     private final Discogs discogs = mock(Discogs.class);
     private final Inventories inventories = mock(Inventories.class);
@@ -24,7 +24,7 @@ class DiscogsInventoryTest {
         when(discogs.inventory("utente")).thenReturn(listings);
         when(idGenerator.generate()).thenReturn("idInventory");
 
-        DiscogsInventory inventory = new DiscogsInventory(discogs, idGenerator, inventories);
+        DiscogsInventoryClient inventory = new DiscogsInventoryClient(discogs, idGenerator, inventories);
 
         String result = inventory.fetch("utente");
 
