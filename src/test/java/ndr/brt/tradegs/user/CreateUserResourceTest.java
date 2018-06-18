@@ -1,6 +1,8 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
 
-import ndr.brt.tradegs.user.CreateUser;
+import ndr.brt.tradegs.Commands;
+import ndr.brt.tradegs.Json;
+import ndr.brt.tradegs.ResourceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,13 +11,13 @@ import static java.util.Collections.emptyMap;
 import static ndr.brt.tradegs.Json.toJson;
 import static org.mockito.Mockito.*;
 
-class TradegsTest extends RouteTest {
+class CreateUserResourceTest extends ResourceTest {
 
     private Commands commands = mock(Commands.class);
 
     @BeforeEach
     void setUp() {
-        new Tradegs(commands).init();
+        new CreateUserResource(commands).run();
     }
 
     @Test

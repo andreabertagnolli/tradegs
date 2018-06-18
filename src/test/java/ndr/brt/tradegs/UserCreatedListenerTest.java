@@ -10,26 +10,19 @@ import org.junit.jupiter.api.Test;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static ndr.brt.tradegs.Json.toJson;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class UserCreatedListenerTest {
 
-    private EmbeddedRabbitBroker rabbit;
     private Commands commands = mock(Commands.class);
     private UserCreatedListener listener;
 
     @BeforeEach
     void setUp() {
-        rabbit = new EmbeddedRabbitBroker();
-        rabbit.start();
+        EmbeddedRabbitBroker.initialize();
+        EmbeddedMongoDb.initialize();
         listener = new UserCreatedListener(commands);
-    }
-
-    @AfterEach
-    void tearDown() {
-        rabbit.stop();
     }
 
     @Test
@@ -38,7 +31,7 @@ class UserCreatedListenerTest {
 
         listener.run();
 
-        await().atMost(2, SECONDS)
+        await().atMost(3, SECONDS)
                 .untilAsserted(() -> verify(commands).post(new FetchInventory("user")));
     }
 }

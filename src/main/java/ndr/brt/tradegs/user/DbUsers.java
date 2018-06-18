@@ -5,10 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
-import ndr.brt.tradegs.Event;
-import ndr.brt.tradegs.EventClasses;
-import ndr.brt.tradegs.Events;
-import ndr.brt.tradegs.Json;
+import ndr.brt.tradegs.*;
 import org.bson.Document;
 
 import java.util.List;
@@ -23,10 +20,9 @@ public enum DbUsers implements Users {
     private final Events events;
 
     DbUsers() {
-        MongoClient mongo = new MongoClient("localhost", 12345);
-        MongoDatabase db = mongo.getDatabase("test");
-        db.createCollection("users", new CreateCollectionOptions());
-        users = db.getCollection("users");
+        MongoDatabase database = MongoDbConnection.database();
+        database.createCollection("users", new CreateCollectionOptions());
+        users = database.getCollection("users");
         events = Events.events();
     }
 

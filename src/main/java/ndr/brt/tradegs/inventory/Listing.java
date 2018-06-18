@@ -5,6 +5,16 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 
 public class Listing {
+    private final int id;
+
+    public Listing(int id) {
+        this.id = id;
+    }
+
+    public int id() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object that) {
         return reflectionEquals(this, that);

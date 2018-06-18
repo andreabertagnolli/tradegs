@@ -1,11 +1,12 @@
 package ndr.brt.tradegs.user;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import ndr.brt.tradegs.Commands;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.RabbitConnection;
-import ndr.brt.tradegs.user.FetchInventory;
-import ndr.brt.tradegs.user.UserCreated;
 
 import java.io.IOException;
 import java.util.Optional;

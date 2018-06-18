@@ -11,7 +11,7 @@ public class DiscogsInventory implements Inventory {
     private final Inventories inventories;
 
     public DiscogsInventory() {
-        this(null, () -> UUID.randomUUID().toString(), null); // TODO: implement discogs interface and inventories
+        this(null, () -> UUID.randomUUID().toString(), new DbInventories()); // TODO: implement discogs interface and inventories
     }
 
     public DiscogsInventory(Discogs discogs, IdGenerator idGenerator, Inventories inventories) {

@@ -1,7 +1,6 @@
 package ndr.brt.tradegs;
 
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 
@@ -9,6 +8,7 @@ import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
 import static ndr.brt.tradegs.RabbitConnection.rabbitConnection;
 
 public interface Events {
+
     static Events events() {
         return new Instance();
     }

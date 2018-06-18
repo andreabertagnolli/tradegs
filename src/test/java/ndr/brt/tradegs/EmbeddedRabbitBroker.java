@@ -1,18 +1,30 @@
 package ndr.brt.tradegs;
 
 import org.apache.qpid.server.SystemLauncher;
+import org.junit.platform.commons.logging.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EmbeddedRabbitBroker {
+import static org.slf4j.LoggerFactory.*;
+
+public enum EmbeddedRabbitBroker {
+
+    Instance;
+
+    public static void initialize() {
+        LOG.info("Initialize EmbeddedRabbitBroker");
+    }
 
     private static final String INITIAL_CONFIGURATION = "embedded-rabbit-configuration.json";
+    private static final Logger LOG = getLogger(EmbeddedRabbitBroker.class);
     private SystemLauncher systemLauncher;
 
-    public EmbeddedRabbitBroker() {
+    EmbeddedRabbitBroker() {
         systemLauncher = new SystemLauncher();
+        start();
     }
 
     public void start() {

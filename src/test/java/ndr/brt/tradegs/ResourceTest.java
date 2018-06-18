@@ -4,9 +4,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import spark.Spark;
 
-class RouteTest {
+public class ResourceTest {
 
-    static final int LISTEN_PORT = 8164;
+    protected static final int LISTEN_PORT = 8164;
 
     static {
         Spark.port(LISTEN_PORT);

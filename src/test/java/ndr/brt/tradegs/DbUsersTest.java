@@ -25,31 +25,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class DbUsersTest {
 
-    private MongodProcess mongod;
-    private EmbeddedRabbitBroker rabbit;
     private BlockingQueue<String> events = new ArrayBlockingQueue<>(1);
     private DbUsers users;
 
     @BeforeEach
-    void setUp() throws IOException {
-        rabbit = new EmbeddedRabbitBroker();
-        rabbit.start();
-
-        mongod = MongodStarter.getDefaultInstance()
-                .prepare(new MongodConfigBuilder()
-                        .version(Version.Main.PRODUCTION)
-                        .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
-                        .build())
-                .start();
+    void setUp() {
+        EmbeddedRabbitBroker.initialize();
+        EmbeddedMongoDb.initialize();
 
         users = DbUsers.DbUsers;
         pollEventsTo(events);
-    }
-
-    @AfterEach
-    void tearDown() {
-        mongod.stop();
-        rabbit.stop();
     }
 
     @Test
@@ -72,7 +57,7 @@ class DbUsersTest {
             channel.queueBind("test", "tradegs", "user.created");
             channel.basicConsume("test", new DefaultConsumer(channel) {
                 @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                     try {
                         queue.put(new String(body));
                     } catch (InterruptedException e) {
