@@ -2,6 +2,8 @@ package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.inventory.DiscogsInventoryClient;
 import ndr.brt.tradegs.user.*;
+import ndr.brt.tradegs.wantlist.FetchWantlist;
+import ndr.brt.tradegs.wantlist.FetchWantlistHandler;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +23,8 @@ public interface Commands {
         private Instance() {
             handlers = Map.of(
                     CreateUser.class, new CreateUserHandler(DbUsers.DbUsers),
-                    FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(), DbUsers.DbUsers)
+                    FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(), DbUsers.DbUsers),
+                    FetchWantlist.class, new FetchWantlistHandler(null, DbUsers.DbUsers) // TODO: implement Wantlist client
             );
         }
 

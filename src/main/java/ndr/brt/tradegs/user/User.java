@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Event;
+import ndr.brt.tradegs.wantlist.WantlistFetched;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,26 +13,26 @@ public class User {
     private String id;
     private List<Event> changes = new ArrayList<>();
     private String inventoryId;
+    private String wantlistId;
 
     public String id() {
         return id;
     }
 
     public User created(String id) {
-        UserCreated event = new UserCreated(id);
-
-        apply(event);
-        changes.add(event);
+        emit(new UserCreated(id));
         return this;
     }
 
     public void inventoryFetched(String inventoryId) {
-        InventoryFetched event = new InventoryFetched(id, inventoryId);
-
-        apply(event);
-        changes.add(event);
+        emit(new InventoryFetched(id, inventoryId));
     }
 
+    public void wantlistFetched(String wantlistId) {
+        emit(new WantlistFetched(id, wantlistId));
+    }
+
+    // TODO: use a map instead of a switch
     void apply(Event event) {
         switch (event.type()) {
             case "UserCreated":
@@ -40,8 +41,16 @@ public class User {
             case "InventoryFetched":
                 apply(InventoryFetched.class.cast(event));
                 break;
+            case "WantlistFetched":
+                apply(WantlistFetched.class.cast(event));
+                break;
             default: throw new RuntimeException("Unknown event type: " + event.getClass().getComponentType());
         }
+    }
+
+    private void emit(Event event) {
+        apply(event);
+        changes.add(event);
     }
 
     private void apply(UserCreated event) {
@@ -50,6 +59,10 @@ public class User {
 
     private void apply(InventoryFetched event) {
         this.inventoryId = event.inventoryId();
+    }
+
+    private void apply(WantlistFetched event) {
+        this.wantlistId = event.wantlistId();
     }
 
     public boolean exists() {
@@ -62,6 +75,10 @@ public class User {
 
     public String inventoryId() {
         return inventoryId;
+    }
+
+    public String wantlistId() {
+        return wantlistId;
     }
 
     public void clearChanges() {

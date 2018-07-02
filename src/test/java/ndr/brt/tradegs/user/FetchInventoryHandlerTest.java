@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
-class FetchInventoryClientHandlerTest {
+class FetchInventoryHandlerTest {
 
     private InventoryClient inventoryClient = mock(InventoryClient.class);
     private Users users = mock(Users.class);
