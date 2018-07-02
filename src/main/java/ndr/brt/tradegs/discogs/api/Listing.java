@@ -1,4 +1,4 @@
-package ndr.brt.tradegs.inventory;
+package ndr.brt.tradegs.discogs.api;
 
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;

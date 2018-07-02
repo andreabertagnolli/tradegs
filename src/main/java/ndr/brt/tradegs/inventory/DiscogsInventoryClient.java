@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.inventory;
 
 import ndr.brt.tradegs.discogs.Discogs;
+import ndr.brt.tradegs.discogs.api.Listing;
 
 import java.util.List;
 import java.util.UUID;

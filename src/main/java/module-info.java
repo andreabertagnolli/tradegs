@@ -5,4 +5,5 @@ module tradegs {
     requires mongo.java.driver;
     requires com.rabbitmq.client;
     requires gson;
+    requires slf4j.api;
 }

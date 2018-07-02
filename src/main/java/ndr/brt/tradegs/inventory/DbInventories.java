@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.MongoDbConnection;
+import ndr.brt.tradegs.discogs.api.Listing;
 import org.bson.Document;
 
 import java.util.List;

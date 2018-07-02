@@ -1,6 +1,6 @@
 package ndr.brt.tradegs.discogs;
 
-import ndr.brt.tradegs.inventory.Listing;
+import ndr.brt.tradegs.discogs.api.Listing;
 
 import java.util.List;
 

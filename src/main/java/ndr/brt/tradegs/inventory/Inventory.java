@@ -1,5 +1,7 @@
 package ndr.brt.tradegs.inventory;
 
+import ndr.brt.tradegs.discogs.api.Listing;
+
 import java.util.List;
 
 public class Inventory {

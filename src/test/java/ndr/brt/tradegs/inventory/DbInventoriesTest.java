@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.inventory;
 
 import ndr.brt.tradegs.EmbeddedMongoDb;
+import ndr.brt.tradegs.discogs.api.Listing;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
