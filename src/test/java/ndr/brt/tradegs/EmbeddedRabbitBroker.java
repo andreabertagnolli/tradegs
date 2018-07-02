@@ -1,14 +1,13 @@
 package ndr.brt.tradegs;
 
 import org.apache.qpid.server.SystemLauncher;
-import org.junit.platform.commons.logging.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.slf4j.LoggerFactory.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public enum EmbeddedRabbitBroker {
 

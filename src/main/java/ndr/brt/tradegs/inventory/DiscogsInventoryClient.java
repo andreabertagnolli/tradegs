@@ -11,7 +11,7 @@ public class DiscogsInventoryClient implements InventoryClient {
     private final Inventories inventories;
 
     public DiscogsInventoryClient() {
-        this(null, () -> UUID.randomUUID().toString(), Inventories.inventories()); // TODO: implement discogs interface and inventories
+        this(new DiscogsClient(), () -> UUID.randomUUID().toString(), Inventories.inventories()); // TODO: implement discogs interface and inventories
     }
 
     public DiscogsInventoryClient(Discogs discogs, IdGenerator idGenerator, Inventories inventories) {
