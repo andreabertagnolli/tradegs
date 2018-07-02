@@ -7,11 +7,14 @@ import com.rabbitmq.client.Envelope;
 import ndr.brt.tradegs.Commands;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.RabbitConnection;
+import ndr.brt.tradegs.wantlist.FetchWantlist;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Optional;
 
 import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
+import static java.util.Arrays.asList;
 
 public class UserCreatedListener implements Runnable {
 
@@ -40,8 +43,8 @@ public class UserCreatedListener implements Runnable {
                             .map(String::new)
                             .map(it -> Json.fromJson(it, UserCreated.class))
                             .map(UserCreated::id)
-                            .map(FetchInventory::new)
-                            .ifPresent(commands::post);
+                            .map(it -> asList(new FetchInventory(it), new FetchWantlist(it)))
+                            .ifPresent(it -> it.forEach(commands::post));
                 }
             });
         } catch (Exception e) {

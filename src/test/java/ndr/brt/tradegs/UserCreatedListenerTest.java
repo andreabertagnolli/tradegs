@@ -3,6 +3,7 @@ package ndr.brt.tradegs;
 import ndr.brt.tradegs.user.FetchInventory;
 import ndr.brt.tradegs.user.UserCreated;
 import ndr.brt.tradegs.user.UserCreatedListener;
+import ndr.brt.tradegs.wantlist.FetchWantlist;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class UserCreatedListenerTest {
         listener.run();
 
         await().atMost(3, SECONDS)
-                .untilAsserted(() -> verify(commands).post(new FetchInventory("user")));
+                .untilAsserted(() -> {
+                    verify(commands).post(new FetchInventory("user"));
+                    verify(commands).post(new FetchWantlist("user"));
+                });
     }
 }
