@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 
 import java.net.URI;
 import java.util.Iterator;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -26,6 +29,10 @@ class ListingPages implements Iterable<ListingPage> {
     @Override
     public Iterator<ListingPage> iterator() {
         return new ListingPagesIterator();
+    }
+
+    public Stream<ListingPage> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
     }
 
     private class ListingPagesIterator implements Iterator<ListingPage> {

@@ -23,8 +23,7 @@ public class DiscogsClient implements Discogs {
     @Override
     public List<Listing> inventory(String user) {
 
-        ListingPages pages = new ListingPages(user, http);
-        return StreamSupport.stream(pages.spliterator(), false)
+        return new ListingPages(user, http).stream()
                 .map(ListingPage::listings)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
