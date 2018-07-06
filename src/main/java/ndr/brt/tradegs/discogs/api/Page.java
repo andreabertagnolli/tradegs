@@ -1,5 +1,10 @@
 package ndr.brt.tradegs.discogs.api;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+
 public abstract class Page {
     private final Pagination pagination;
 
@@ -13,5 +18,10 @@ public abstract class Page {
 
     public int pages() {
         return pagination.pages();
+    }
+
+    @Override
+    public String toString() {
+        return reflectionToString(this);
     }
 }
