@@ -1,6 +1,5 @@
 package ndr.brt.tradegs.discogs;
 
-import jdk.incubator.http.HttpClient;
 import jdk.incubator.http.HttpRequest;
 import jdk.incubator.http.HttpResponse;
 import ndr.brt.tradegs.Json;
@@ -18,11 +17,11 @@ public class WantsPages implements Iterable<WantlistPage> {
 
     private final Logger log = getLogger(getClass());
     private final String utente;
-    private final HttpClient http;
+    private final RequestsExecutor executor;
 
-    public WantsPages(String utente, HttpClient httpClient) {
+    public WantsPages(String utente, RequestsExecutor executor) {
         this.utente = utente;
-        http = httpClient;
+        this.executor = executor;
     }
 
     @Override
@@ -51,13 +50,13 @@ public class WantsPages implements Iterable<WantlistPage> {
 
         @Override
         public WantlistPage next() {
-            log.info("Request inventory page {}", actualPage);
+            log.info("Request wantlist page {}", actualPage);
             String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", utente, actualPage);
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                     .header("User-Agent", "Tradegs")
                     .GET().build();
             try {
-                HttpResponse<String> response = http.send(request, HttpResponse.BodyHandler.asString());
+                HttpResponse<String> response = executor.execute(request);
 
                 String json = response.body();
 

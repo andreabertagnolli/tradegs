@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 
 import java.net.URI;
 import java.util.Iterator;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -19,11 +18,11 @@ public class ListingPages implements Iterable<ListingPage> {
 
     private final Logger log = getLogger(getClass());
     private final String utente;
-    private final HttpClient http;
+    private final RequestsExecutor executor;
 
-    public ListingPages(String utente, HttpClient httpClient) {
+    public ListingPages(String utente, RequestsExecutor executor) {
         this.utente = utente;
-        http = httpClient;
+        this.executor = executor;
     }
 
     @Override
@@ -58,7 +57,7 @@ public class ListingPages implements Iterable<ListingPage> {
                     .header("User-Agent", "Tradegs")
                     .GET().build();
             try {
-                HttpResponse<String> response = http.send(request, HttpResponse.BodyHandler.asString());
+                HttpResponse<String> response = executor.execute(request);
 
                 String json = response.body();
 
