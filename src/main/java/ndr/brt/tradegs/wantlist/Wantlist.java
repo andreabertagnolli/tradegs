@@ -1,5 +1,7 @@
 package ndr.brt.tradegs.wantlist;
 
+import ndr.brt.tradegs.discogs.api.Want;
+
 import java.util.List;
 
 public class Wantlist {

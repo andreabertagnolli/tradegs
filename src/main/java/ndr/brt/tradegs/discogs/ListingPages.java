@@ -1,4 +1,4 @@
-package ndr.brt.tradegs.inventory;
+package ndr.brt.tradegs.discogs;
 
 import jdk.incubator.http.HttpClient;
 import jdk.incubator.http.HttpRequest;

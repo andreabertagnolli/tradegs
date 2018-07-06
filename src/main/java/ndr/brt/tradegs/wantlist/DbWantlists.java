@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.MongoDbConnection;
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.Inventory;
 import org.bson.Document;
 

@@ -1,7 +1,7 @@
 package ndr.brt.tradegs.wantlist;
 
 import ndr.brt.tradegs.discogs.Discogs;
-import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
 
 import java.util.List;

@@ -2,12 +2,11 @@ package ndr.brt.tradegs.discogs.api;
 
 import java.util.List;
 
-public class ListingPage {
-    private final Pagination pagination;
+public class ListingPage extends Page {
     private final List<Listing> listings;
 
     private ListingPage(Pagination pagination, List<Listing> listings) {
-        this.pagination = pagination;
+        super(pagination);
         this.listings = listings;
     }
 
@@ -15,11 +14,4 @@ public class ListingPage {
         return listings;
     }
 
-    public int page() {
-        return pagination.page();
-    }
-
-    public int pages() {
-        return pagination.pages();
-    }
 }

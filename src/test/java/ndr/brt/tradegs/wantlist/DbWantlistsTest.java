@@ -2,6 +2,7 @@ package ndr.brt.tradegs.wantlist;
 
 import ndr.brt.tradegs.EmbeddedMongoDb;
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
