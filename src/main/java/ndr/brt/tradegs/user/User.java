@@ -32,7 +32,6 @@ public class User {
         emit(new WantlistFetched(id, wantlistId));
     }
 
-    // TODO: use a map instead of a switch
     void apply(Event event) {
         switch (event.type()) {
             case "UserCreated":
