@@ -1,5 +1,6 @@
 package ndr.brt.tradegs.inventory;
 
+import ndr.brt.tradegs.discogs.DiscogsClient;
 import ndr.brt.tradegs.discogs.api.Listing;
 import org.junit.jupiter.api.Test;
 

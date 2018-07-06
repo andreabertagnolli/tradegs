@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-class ListingPages implements Iterable<ListingPage> {
+public class ListingPages implements Iterable<ListingPage> {
 
     private final Logger log = getLogger(getClass());
     private final String utente;

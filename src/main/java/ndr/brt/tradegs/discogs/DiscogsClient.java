@@ -1,9 +1,10 @@
-package ndr.brt.tradegs.inventory;
+package ndr.brt.tradegs.discogs;
 
 import jdk.incubator.http.HttpClient;
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.ListingPage;
+import ndr.brt.tradegs.inventory.ListingPages;
 import ndr.brt.tradegs.wantlist.Want;
 
 import java.util.Collection;

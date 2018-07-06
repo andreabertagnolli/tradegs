@@ -7,4 +7,8 @@ public class Want {
     public Want(int id) {
         this.id = id;
     }
+
+    public int id() {
+        return id;
+    }
 }
