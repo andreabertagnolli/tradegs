@@ -1,7 +1,6 @@
 package ndr.brt.tradegs.user;
 
 import com.mongodb.Block;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -20,7 +19,7 @@ public enum DbUsers implements Users {
     private final Events events;
 
     DbUsers() {
-        MongoDatabase database = MongoDbConnection.database();
+        MongoDatabase database = MongoDbConnection.mongoDatabase();
         database.createCollection("users", new CreateCollectionOptions());
         users = database.getCollection("users");
         events = Events.events();

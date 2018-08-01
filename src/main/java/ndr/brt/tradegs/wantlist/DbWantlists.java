@@ -4,9 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.MongoDbConnection;
-import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.Want;
-import ndr.brt.tradegs.inventory.Inventory;
 import org.bson.Document;
 
 import java.util.List;
@@ -18,7 +16,7 @@ public class DbWantlists implements Wantlists {
     private final MongoCollection<Document> wantlists;
 
     DbWantlists() {
-        MongoDatabase database = MongoDbConnection.database();
+        MongoDatabase database = MongoDbConnection.mongoDatabase();
         database.createCollection("wantlists");
         wantlists = database.getCollection("wantlists");
     }

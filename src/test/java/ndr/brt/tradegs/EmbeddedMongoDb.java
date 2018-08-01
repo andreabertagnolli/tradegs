@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import java.io.IOException;
 
 import static de.flapdoodle.embed.mongo.MongodStarter.getDefaultInstance;
+import static ndr.brt.tradegs.MongoDbConnection.host;
+import static ndr.brt.tradegs.MongoDbConnection.port;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public enum EmbeddedMongoDb {
@@ -31,7 +33,7 @@ public enum EmbeddedMongoDb {
         try {
             config = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
-                    .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
+                    .net(new Net(host(), port(), Network.localhostIsIPv6()))
                     .build();
             start();
         } catch (Exception e) {
