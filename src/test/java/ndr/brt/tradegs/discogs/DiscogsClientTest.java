@@ -1,4 +1,4 @@
-package ndr.brt.tradegs.inventory;
+package ndr.brt.tradegs.discogs;
 
 import ndr.brt.tradegs.discogs.DiscogsClient;
 import ndr.brt.tradegs.discogs.api.Listing;
@@ -20,7 +20,7 @@ class DiscogsClientTest {
         client = new DiscogsClient();
     }
 
-    // @Disabled
+    @Disabled
     @Test
     void check_inventory_and_handle_pagination() {
         List<Listing> listings = client.inventory("smellymilk");
@@ -28,7 +28,7 @@ class DiscogsClientTest {
         assertThat(listings).size().isGreaterThan(50);
     }
 
-    // @Disabled
+    @Disabled
     @Test
     void check_wantlist_and_handle_pagination() {
         List<Want> wants = client.wantlist("smellymilk");

@@ -4,6 +4,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
@@ -16,9 +17,10 @@ public enum RabbitConnection implements Supplier<Connection> {
     RabbitConnection() {
         try {
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            connectionFactory.setHost("localhost");
-            connectionFactory.setUsername("guest");
-            connectionFactory.setPassword("guest");
+            ResourceBundle properties = ResourceBundle.getBundle("rabbitmq");
+            connectionFactory.setHost(properties.getString("host"));
+            connectionFactory.setUsername(properties.getString("username"));
+            connectionFactory.setPassword(properties.getString("password"));
             connection = connectionFactory.newConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
