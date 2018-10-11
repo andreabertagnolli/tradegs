@@ -20,4 +20,5 @@ public abstract class Command {
     public String toString() {
         return reflectionToString(this);
     }
+
 }

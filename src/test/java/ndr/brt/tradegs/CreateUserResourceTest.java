@@ -1,8 +1,7 @@
-package ndr.brt.tradegs.user;
+package ndr.brt.tradegs;
 
-import ndr.brt.tradegs.Commands;
-import ndr.brt.tradegs.Json;
-import ndr.brt.tradegs.ResourceTest;
+import ndr.brt.tradegs.user.CreateUser;
+import ndr.brt.tradegs.user.CreateUserResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,8 @@ class CreateUserResourceTest extends ResourceTest {
         .then()
             .statusCode(200);
 
-        verify(commands).post(new CreateUser("user"));
+        verify(commands).post(isA(CreateUser.class));
+        verify(commands).post(argThat(it -> "user".equals(((CreateUser) it).id().orElse(null))));
     }
 
     @Test

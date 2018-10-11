@@ -9,21 +9,13 @@ import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public enum EmbeddedRabbitBroker {
-
-    Instance;
-
-    public static void initialize() {
-        LOG.info("Initialize EmbeddedRabbitBroker");
-    }
+public class EmbeddedRabbitBroker {
 
     private static final String INITIAL_CONFIGURATION = "embedded-rabbit-configuration.json";
-    private static final Logger LOG = getLogger(EmbeddedRabbitBroker.class);
     private SystemLauncher systemLauncher;
 
     EmbeddedRabbitBroker() {
         systemLauncher = new SystemLauncher();
-        start();
     }
 
     public void start() {

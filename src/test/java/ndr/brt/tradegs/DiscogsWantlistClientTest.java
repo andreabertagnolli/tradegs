@@ -1,9 +1,11 @@
-package ndr.brt.tradegs.wantlist;
+package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
+import ndr.brt.tradegs.wantlist.DiscogsWantlistClient;
+import ndr.brt.tradegs.wantlist.Wantlists;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

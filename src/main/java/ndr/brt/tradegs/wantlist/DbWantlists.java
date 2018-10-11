@@ -15,7 +15,7 @@ public class DbWantlists implements Wantlists {
 
     private final MongoCollection<Document> wantlists;
 
-    DbWantlists() {
+    public DbWantlists() {
         MongoDatabase database = MongoDbConnection.mongoDatabase();
         database.createCollection("wantlists");
         wantlists = database.getCollection("wantlists");

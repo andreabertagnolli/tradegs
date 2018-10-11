@@ -12,16 +12,15 @@ public enum RabbitConnection implements Supplier<Connection> {
 
     RABBIT_CONNECTION;
 
-    private final Connection connection;
+    private final ConnectionFactory connectionFactory;
 
     RabbitConnection() {
         try {
-            ConnectionFactory connectionFactory = new ConnectionFactory();
+            connectionFactory = new ConnectionFactory();
             ResourceBundle properties = ResourceBundle.getBundle("rabbitmq");
             connectionFactory.setHost(properties.getString("host"));
             connectionFactory.setUsername(properties.getString("username"));
             connectionFactory.setPassword(properties.getString("password"));
-            connection = connectionFactory.newConnection();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -33,6 +32,10 @@ public enum RabbitConnection implements Supplier<Connection> {
 
     @Override
     public Connection get() {
-        return connection;
+        try {
+            return connectionFactory.newConnection();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 }

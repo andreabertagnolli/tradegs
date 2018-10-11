@@ -1,15 +1,15 @@
-package ndr.brt.tradegs.wantlist;
+package ndr.brt.tradegs;
 
-import ndr.brt.tradegs.user.FetchInventory;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.Users;
+import ndr.brt.tradegs.wantlist.FetchWantlist;
+import ndr.brt.tradegs.wantlist.FetchWantlistHandler;
+import ndr.brt.tradegs.wantlist.WantlistClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FetchWantlistHandlerTest {
 

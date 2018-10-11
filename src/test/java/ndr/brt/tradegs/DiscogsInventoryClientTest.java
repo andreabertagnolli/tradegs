@@ -1,7 +1,10 @@
-package ndr.brt.tradegs.inventory;
+package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.inventory.DiscogsInventoryClient;
+import ndr.brt.tradegs.inventory.IdGenerator;
+import ndr.brt.tradegs.inventory.Inventories;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,9 +1,9 @@
-package ndr.brt.tradegs.wantlist;
+package ndr.brt.tradegs;
 
-import ndr.brt.tradegs.EmbeddedMongoDb;
-import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
+import ndr.brt.tradegs.wantlist.DbWantlists;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DbWantlistsTest {
 
+    private EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
+
     @BeforeEach
     void setUp() {
-        EmbeddedMongoDb.initialize();
+        mongoDb.start();
+    }
+
+    @AfterEach
+    void tearDown() {
+        mongoDb.stop();
     }
 
     @Test

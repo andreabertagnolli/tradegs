@@ -26,15 +26,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class DbUsersTest {
 
     private BlockingQueue<String> events = new ArrayBlockingQueue<>(1);
+    private EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
+    private EmbeddedRabbitBroker rabbitBroker = new EmbeddedRabbitBroker();
     private DbUsers users;
 
     @BeforeEach
     void setUp() {
-        EmbeddedRabbitBroker.initialize();
-        EmbeddedMongoDb.initialize();
+        rabbitBroker.start();
+        mongoDb.start();
 
         users = DbUsers.DbUsers;
         pollEventsTo(events);
+    }
+
+    @AfterEach
+    void teardown() {
+        rabbitBroker.stop();
+        mongoDb.stop();
     }
 
     @Test

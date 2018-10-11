@@ -18,12 +18,20 @@ class UserCreatedListenerTest {
 
     private Commands commands = mock(Commands.class);
     private UserCreatedListener listener;
+    private EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
+    private EmbeddedRabbitBroker rabbitBroker = new EmbeddedRabbitBroker();
 
     @BeforeEach
     void setUp() {
-        EmbeddedRabbitBroker.initialize();
-        EmbeddedMongoDb.initialize();
+        rabbitBroker.start();
+        mongoDb.start();
         listener = new UserCreatedListener(commands);
+    }
+
+    @AfterEach
+    void tearDown() {
+        rabbitBroker.stop();
+        mongoDb.stop();
     }
 
     @Test

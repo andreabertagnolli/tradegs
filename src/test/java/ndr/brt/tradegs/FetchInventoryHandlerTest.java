@@ -1,6 +1,10 @@
-package ndr.brt.tradegs.user;
+package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.inventory.InventoryClient;
+import ndr.brt.tradegs.user.FetchInventory;
+import ndr.brt.tradegs.user.FetchInventoryHandler;
+import ndr.brt.tradegs.user.User;
+import ndr.brt.tradegs.user.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
