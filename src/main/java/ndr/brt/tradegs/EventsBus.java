@@ -2,16 +2,13 @@ package ndr.brt.tradegs;
 
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class EventsBus implements Events {
     private EventBus bus;
-    private Map<String, Pair<Class, Consumer>> consumers = new HashMap<>();
+    private Map<String, Consumers> consumers = new HashMap<>();
 
     EventsBus(EventBus bus) {
         this.bus = bus;
@@ -19,8 +16,8 @@ public class EventsBus implements Events {
             Envelope envelope = Json.fromJson(message.body(), Envelope.class);
             Optional.ofNullable(consumers.get(envelope.type))
                     .ifPresent(it -> {
-                        Object event = Json.fromJson(envelope.event, it.getLeft());
-                        it.getRight().accept(event);
+                        Object event = Json.fromJson(envelope.event, it.clazz());
+                        it.accept(event);
                     });
         });
     }
@@ -33,7 +30,9 @@ public class EventsBus implements Events {
 
     @Override
     public <T extends Event> void on(Class<T> clazz, Consumer<T> consumer) {
-        consumers.put(clazz.getSimpleName(), Pair.of(clazz, consumer));
+        Consumers consumers = this.consumers.getOrDefault(clazz.getSimpleName(), new Consumers(clazz));
+        consumers.add(consumer);
+        this.consumers.put(clazz.getSimpleName(), consumers);
     }
 
     private class Envelope {
@@ -41,10 +40,33 @@ public class EventsBus implements Events {
         private String event;
         private String type;
 
-        public Envelope(Event event) {
+        Envelope(Event event) {
             this.event = Json.toJson(event);
             this.type = event.getClass().getSimpleName();
         }
 
+    }
+
+    private class Consumers {
+
+        private final Class<? extends Event> clazz;
+        private final List<Consumer> consumers;
+
+        public <T extends Event> Consumers(Class<T> clazz) {
+            this.clazz = clazz;
+            this.consumers = new ArrayList<>();
+        }
+
+        public <T extends Event> void add(Consumer<T> consumer) {
+            consumers.add(consumer);
+        }
+
+        public Class clazz() {
+            return clazz;
+        }
+
+        public void accept(Object event) {
+            consumers.forEach(it -> it.accept(event));
+        }
     }
 }

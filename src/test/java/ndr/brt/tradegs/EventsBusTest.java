@@ -1,6 +1,7 @@
 package ndr.brt.tradegs;
 
 import io.vertx.core.Vertx;
+import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -17,6 +18,19 @@ class EventsBusTest {
 
         eventsBus.on(WrongEvent.class, event -> context.failNow(new Exception("It should do nothing")));
         eventsBus.on(RightEvent.class, event -> context.completeNow());
+
+        eventsBus.publish(new RightEvent());
+    }
+
+    @Test
+    @Timeout(1000)
+    void handle_more_than_one_consumer(Vertx vertx, VertxTestContext context) {
+        Events eventsBus = new EventsBus(vertx.eventBus());
+
+        Checkpoint checkpoint = context.checkpoint(2);
+
+        eventsBus.on(RightEvent.class, event -> checkpoint.flag());
+        eventsBus.on(RightEvent.class, event -> checkpoint.flag());
 
         eventsBus.publish(new RightEvent());
     }
