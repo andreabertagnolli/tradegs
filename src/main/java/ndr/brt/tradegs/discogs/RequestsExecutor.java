@@ -1,7 +1,7 @@
 package ndr.brt.tradegs.discogs;
 
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public interface RequestsExecutor {
     HttpResponse<String> execute(HttpRequest request);

@@ -9,7 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <junit.version>5.2.0</junit.version>
+        <junit.version>5.4.0-M1</junit.version>
+        <vertx.version>3.6.1</vertx.version>
     </properties>
 
     <prerequisites>
@@ -23,23 +24,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>10</source>
-                    <target>10</target>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-                <goals>
-                    <goal>test</goal>
-                </goals>
-                <configuration>
-                    <argLine>--add-modules=jdk.incubator.httpclient</argLine>
-                    <argLine>--add-opens ndr.brt.tradegs/ndr.brt.tradegs=ALL-UNNAMED</argLine>
-                </configuration>
+                <version>3.0.0-M1</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.platform</groupId>
@@ -47,9 +39,9 @@
                         <version>1.2.0</version>
                     </dependency>
                     <dependency>
-                      <groupId>org.junit.jupiter</groupId>
-                      <artifactId>junit-jupiter-engine</artifactId>
-                      <version>${junit.version}</version>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -58,9 +50,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
-            <version>2.7.2</version>
+            <version>2.8.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -90,7 +92,7 @@
         <!--test-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
@@ -103,13 +105,13 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>3.1.1</version>
+            <version>3.3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>2.1.1</version>
+            <version>2.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -134,6 +136,12 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>2.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
 

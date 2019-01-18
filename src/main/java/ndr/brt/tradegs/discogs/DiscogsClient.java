@@ -1,7 +1,5 @@
 package ndr.brt.tradegs.discogs;
 
-import jdk.incubator.http.HttpRequest;
-import jdk.incubator.http.HttpResponse;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.ListingPage;
@@ -10,6 +8,7 @@ import ndr.brt.tradegs.discogs.api.WantlistPage;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.net.http.HttpRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +23,8 @@ public class DiscogsClient implements Discogs {
     private final Pages<WantlistPage> wantlistPages;
 
     public DiscogsClient() {
-        listingPages = new Pages<>(getListingPage);
-        wantlistPages = new Pages<>(getWantlistPage);
+        listingPages = new Pages<>(new GetListingPage());
+        wantlistPages = new Pages<>(new GetWantlistPage());
     }
 
     @Override
@@ -46,20 +45,6 @@ public class DiscogsClient implements Discogs {
                 .collect(Collectors.toList());
     }
 
-    private final GetPage<ListingPage> getListingPage = (userId, pageNumber) -> {
-        log.info("Request inventory page {}", pageNumber);
-        String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("User-Agent", "Tradegs")
-                .GET().build();
-
-        String json = executor
-                .execute(request)
-                .body();
-
-        return Json.fromJson(json, ListingPage.class);
-    };
-
     private final GetPage<WantlistPage> getWantlistPage = (userId, pageNumber) -> {
         log.info("Request wantlist page {}", pageNumber);
         String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
@@ -73,5 +58,41 @@ public class DiscogsClient implements Discogs {
 
         return Json.fromJson(json, WantlistPage.class);
     };
+
+    private class GetListingPage implements GetPage<ListingPage> {
+
+        @Override
+        public ListingPage apply(String userId, Integer pageNumber) {
+            log.info("Request inventory page {}", pageNumber);
+            String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                    .header("User-Agent", "Tradegs")
+                    .GET().build();
+
+            String json = executor
+                    .execute(request)
+                    .body();
+
+            return Json.fromJson(json, ListingPage.class);
+        }
+    }
+
+    private class GetWantlistPage implements GetPage<WantlistPage> {
+
+        @Override
+        public WantlistPage apply(String userId, Integer pageNumber) {
+            log.info("Request wantlist page {}", pageNumber);
+            String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                    .header("User-Agent", "Tradegs")
+                    .GET().build();
+
+            String json = executor
+                    .execute(request)
+                    .body();
+
+            return Json.fromJson(json, WantlistPage.class);
+        }
+    }
 
 }
