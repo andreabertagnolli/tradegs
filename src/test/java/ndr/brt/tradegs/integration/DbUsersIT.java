@@ -1,9 +1,11 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.integration;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import ndr.brt.tradegs.EmbeddedMongoDb;
+import ndr.brt.tradegs.Events;
 import ndr.brt.tradegs.user.DbUsers;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.UserCreated;
@@ -16,7 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
-class DbUsersTest {
+class DbUsersIT {
 
     private static EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
     private DbUsers users;

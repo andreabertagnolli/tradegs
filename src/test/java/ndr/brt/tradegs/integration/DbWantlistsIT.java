@@ -1,5 +1,6 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.integration;
 
+import ndr.brt.tradegs.EmbeddedMongoDb;
 import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
 import ndr.brt.tradegs.wantlist.DbWantlists;
@@ -14,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DbWantlistsTest {
+class DbWantlistsIT {
 
     private EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
 

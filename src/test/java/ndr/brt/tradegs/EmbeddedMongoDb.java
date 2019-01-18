@@ -23,7 +23,7 @@ public class EmbeddedMongoDb {
     private MongodProcess mongod;
     //private final IMongodConfig config;
 
-    EmbeddedMongoDb() {
+    public EmbeddedMongoDb() {
         /*try {
             config = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
