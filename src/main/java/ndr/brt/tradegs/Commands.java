@@ -16,8 +16,8 @@ import java.util.UUID;
 
 public interface Commands {
 
-    static Commands commands() {
-        return new Instance();
+    static Commands commands(Events events) {
+        return new Instance(events);
     }
 
     <T extends Command> void post(T command);
@@ -26,17 +26,18 @@ public interface Commands {
 
         private final Map<Class, Handler> handlers;
 
-        private Instance() {
+        private Instance(Events events) {
 
             DiscogsClient discogsClient = new DiscogsClient();
             IdGenerator idGenerator = () -> UUID.randomUUID().toString();
             Inventories inventories = Inventories.inventories();
             Wantlists wantlists = Wantlists.wantlists();
+            DbUsers dbUsers = new DbUsers(events);
 
             handlers = Map.of(
-                    CreateUser.class, new CreateUserHandler(DbUsers.DbUsers),
-                    FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(discogsClient, idGenerator, inventories), DbUsers.DbUsers),
-                    FetchWantlist.class, new FetchWantlistHandler(new DiscogsWantlistClient(discogsClient, idGenerator, wantlists), DbUsers.DbUsers)
+                    CreateUser.class, new CreateUserHandler(dbUsers),
+                    FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(discogsClient, idGenerator, inventories), dbUsers),
+                    FetchWantlist.class, new FetchWantlistHandler(new DiscogsWantlistClient(discogsClient, idGenerator, wantlists), dbUsers)
             );
         }
 

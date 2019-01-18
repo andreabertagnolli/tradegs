@@ -1,80 +1,63 @@
 package ndr.brt.tradegs;
 
-import com.rabbitmq.client.*;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
+import io.vertx.core.Vertx;
+import io.vertx.junit5.Timeout;
+import io.vertx.junit5.VertxExtension;
+import io.vertx.junit5.VertxTestContext;
 import ndr.brt.tradegs.user.DbUsers;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.UserCreated;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static ndr.brt.tradegs.RabbitConnection.rabbitConnection;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
+@ExtendWith(VertxExtension.class)
 class DbUsersTest {
 
-    private BlockingQueue<String> events = new ArrayBlockingQueue<>(1);
-    private EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
-    private EmbeddedRabbitBroker rabbitBroker = new EmbeddedRabbitBroker();
+    private static EmbeddedMongoDb mongoDb = new EmbeddedMongoDb();
     private DbUsers users;
+    private Events events;
 
-    @BeforeEach
-    void setUp() {
-        rabbitBroker.start();
+    @BeforeAll
+    static void setup() {
         mongoDb.start();
-
-        users = DbUsers.DbUsers;
-        pollEventsTo(events);
     }
 
-    @AfterEach
-    void teardown() {
-        rabbitBroker.stop();
+    @BeforeEach
+    void setUp(Vertx vertx) {
+        events = Events.bus(vertx.eventBus());
+        users = new DbUsers(events);
+    }
+
+    @AfterAll
+    static void tearDown() {
         mongoDb.stop();
     }
 
     @Test
-    void save_and_retrieve_user() throws InterruptedException {
-        User user = new User()
-                .created("sattad");
+    @Timeout(1000)
+    void when_save_user_events_are_published(VertxTestContext context) {
+        events.on(UserCreated.class, event -> {
+            assertThat(event.id()).isEqualTo("sattad");
+            context.completeNow();
+        });
+
+        users.save(new User().created("sattad"));
+    }
+
+    @Test
+    @Timeout(1000)
+    void save_and_retrieve_user(VertxTestContext context) {
+        User user = new User().created("sattad");
 
         users.save(user);
 
-        assertThat(users.get("sattad"), is(user));
-        assertThat(user.changes().count(), is(0L));
-        UserCreated event = Json.fromJson(events.poll(5, SECONDS), UserCreated.class);
-        assertThat(event.id(), is("sattad"));
-    }
-
-    private void pollEventsTo(BlockingQueue<String> queue) {
-        try {
-            Channel channel = rabbitConnection().createChannel();
-            channel.queueDeclare("test", false, false, true, null);
-            channel.queueBind("test", "tradegs", "user.created");
-            channel.basicConsume("test", new DefaultConsumer(channel) {
-                @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
-                    try {
-                        queue.put(new String(body));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        assertThat(users.get("sattad")).isEqualTo(user);
+        assertThat(user.changes().count()).isEqualTo(0L);
+        context.completeNow();
     }
 }

@@ -1,40 +1,16 @@
 package ndr.brt.tradegs;
 
-import com.rabbitmq.client.Channel;
+import io.vertx.core.eventbus.EventBus;
 
-import java.io.IOException;
-
-import static com.rabbitmq.client.BuiltinExchangeType.TOPIC;
-import static ndr.brt.tradegs.RabbitConnection.rabbitConnection;
+import java.util.function.Consumer;
 
 public interface Events {
 
-    static Events events() {
-        return new Instance();
+    static Events bus(EventBus bus) {
+        return new EventsBus(bus);
     }
 
-    void publish(String event);
+    void publish(Event event);
 
-    class Instance implements Events {
-
-        private final Channel channel;
-
-        public Instance() {
-            try {
-                channel = rabbitConnection().createChannel();
-                channel.exchangeDeclare("tradegs", TOPIC);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void publish(String event) {
-            try {
-                channel.basicPublish("tradegs", "user.created", null, event.getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+    <T extends Event> void on(Class<T> clazz, Consumer<T> event);
 }

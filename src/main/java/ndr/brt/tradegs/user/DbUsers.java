@@ -3,37 +3,25 @@ package ndr.brt.tradegs.user;
 import com.mongodb.Block;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.CreateCollectionOptions;
 import ndr.brt.tradegs.*;
 import org.bson.Document;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
-public enum DbUsers implements Users {
-
-    DbUsers;
+public class DbUsers implements Users {
 
     private final MongoCollection<Document> users;
     private final Events events;
 
-    DbUsers() {
+    public DbUsers(Events events) {
         MongoDatabase database = MongoDbConnection.mongoDatabase();
-        database.createCollection("users", new CreateCollectionOptions());
-        users = database.getCollection("users");
-        events = Events.events();
+        this.users = database.getCollection("users");
+        this.events = events;
     }
 
     @Override
     public void save(User user) {
-        List<String> changes = user.changes()
-                .map(Json::toJson)
-                .collect(toList());
-
-        changes.forEach(it -> {
-            users.insertOne(Document.parse(it));
-            events.publish(it);
+        user.changes().forEach(change -> {
+            users.insertOne(Document.parse(Json.toJson(change)));
+            events.publish(change);
         });
 
         user.clearChanges();
