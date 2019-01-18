@@ -3,6 +3,7 @@ package ndr.brt.tradegs;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.ext.web.Router;
+import ndr.brt.tradegs.user.CreateUserApi;
 
 import static ndr.brt.tradegs.Commands.commands;
 

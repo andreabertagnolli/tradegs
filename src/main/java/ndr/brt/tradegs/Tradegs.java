@@ -1,6 +1,5 @@
 package ndr.brt.tradegs;
 
-import ndr.brt.tradegs.user.CreateUserResource;
 import ndr.brt.tradegs.user.UserCreatedListener;
 import spark.servlet.SparkApplication;
 
@@ -19,7 +18,6 @@ public class Tradegs implements SparkApplication {
     }
 
     public void init() {
-        new CreateUserResource(commands).run();
         new UserCreatedListener(commands).run();
     }
 

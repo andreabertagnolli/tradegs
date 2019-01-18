@@ -1,7 +1,9 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.user;
 
 import io.vertx.ext.web.Router;
-import ndr.brt.tradegs.user.CreateUser;
+import ndr.brt.tradegs.ApiEndpoint;
+import ndr.brt.tradegs.Commands;
+import ndr.brt.tradegs.Json;
 
 public class CreateUserApi implements ApiEndpoint {
     private Router router;
