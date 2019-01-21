@@ -16,29 +16,6 @@ public interface Bus {
 
     <T extends Event> void on(Class<T> clazz, Consumer<T> consumer);
 
-    class Handlers<T> {
-
-        private final Class clazz;
-        private final List<Consumer> consumers;
-
-        Handlers(Class<T> clazz) {
-            this.clazz = clazz;
-            this.consumers = new ArrayList<>();
-        }
-
-        void add(Consumer<T> consumer) {
-            consumers.add(consumer);
-        }
-
-        Class clazz() {
-            return clazz;
-        }
-
-        void accept(Object event) {
-            consumers.forEach(it -> it.accept(event));
-        }
-    }
-
     class Envelope<T> {
 
         final String json;
