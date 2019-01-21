@@ -12,9 +12,9 @@ public interface Bus {
         return new EventsBus(bus);
     }
 
-    void publish(Event event);
+    <T extends Event> void publish(T event);
 
-    <T extends Event> void on(Class<T> clazz, Consumer<T> event);
+    <T extends Event> void on(Class<T> clazz, Consumer<T> consumer);
 
     class Handlers<T> {
 
