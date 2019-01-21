@@ -1,5 +1,6 @@
-package ndr.brt.tradegs;
+package ndr.brt.tradegs.integration;
 
+import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
@@ -18,43 +19,48 @@ import static ndr.brt.tradegs.MongoDbConnection.host;
 import static ndr.brt.tradegs.MongoDbConnection.port;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class EmbeddedMongoDb {
+class EmbeddedMongoDb {
 
-    private MongodProcess mongod;
-    //private final IMongodConfig config;
+    private final MongodExecutable executable;
 
-    public EmbeddedMongoDb() {
-        /*try {
+    static void activate() {
+        Instance.INSTANCE.activate();
+    }
+
+    enum Instance {
+        INSTANCE;
+
+        private EmbeddedMongoDb mongoDb;
+
+        Instance() {
+            mongoDb = new EmbeddedMongoDb();
+            mongoDb.start();
+        }
+
+        public void activate() {
+            // I'm already active!
+        }
+    }
+
+    private EmbeddedMongoDb() {
+        IMongodConfig config;
+        try {
             config = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
                     .net(new Net(host(), port(), localhostIsIPv6()))
                     .build();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }*/
-    }
-
-    public void start() {
-        try {
-
-            IMongodConfig config = new MongodConfigBuilder()
-                    .version(Version.Main.PRODUCTION)
-                    .net(new Net(host(), port(), localhostIsIPv6()))
-                    .build();
             MongodStarter instance = MongodStarter.getDefaultInstance();
-            mongod = instance.prepare(config).start();
+            executable = instance.prepare(config);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void stop() {
+    private void start() {
         try {
-            if (mongod != null) {
-                mongod.stop();
-            }
-        } catch (Throwable ignored) {
-
+            executable.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
