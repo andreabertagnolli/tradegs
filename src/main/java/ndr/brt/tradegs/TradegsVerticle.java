@@ -7,14 +7,15 @@ import ndr.brt.tradegs.user.CreateUserApi;
 import ndr.brt.tradegs.user.UserCreated;
 import ndr.brt.tradegs.user.UserCreatedListener;
 
-import static ndr.brt.tradegs.Commands.commands;
+import static ndr.brt.tradegs.Bus.events;
+import static ndr.brt.tradegs.Bus.commands;
 
 public class TradegsVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> startFuture) {
-        Bus events = Bus.bus(vertx.eventBus());
-        Commands commands = commands(events);
+        Bus events = events(vertx.eventBus());
+        Bus commands = commands(vertx.eventBus(), events);
 
         events.on(UserCreated.class, new UserCreatedListener(commands));
 

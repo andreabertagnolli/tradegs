@@ -16,18 +16,18 @@ public class VertxBus implements Bus {
     }
 
     @Override
-    public void publish(Event event) {
-        Envelope envelope = new Envelope<>(event);
+    public void publish(Object object) {
+        Envelope envelope = new Envelope<>(object);
         bus.publish(address, Json.toJson(envelope));
     }
 
     @Override
-    public <T extends Event> void on(Class<T> clazz, Consumer<T> consumer) {
+    public void on(Class clazz, Consumer consumer) {
         bus.consumer(address, (Message<String> message) -> {
             Envelope envelope = Json.fromJson(message.body(), Envelope.class);
             if (clazz.getSimpleName().equals(envelope.type)) {
-                Event event = Json.fromJson(envelope.json, clazz);
-                consumer.accept((T) event);
+                Object object = Json.fromJson(envelope.json, clazz);
+                consumer.accept(object);
             }
         });
     }

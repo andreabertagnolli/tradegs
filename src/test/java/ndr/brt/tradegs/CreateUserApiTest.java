@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class CreateUserApiTest {
 
     private static final int PORT = 41231;
-    private Commands commands = mock(Commands.class);
+    private Bus commands = mock(Bus.class);
 
     @BeforeEach
     void setUp(Vertx vertx) {
@@ -43,8 +43,8 @@ class CreateUserApiTest {
         .then()
             .statusCode(200);
 
-        verify(commands).post(isA(CreateUser.class));
-        verify(commands).post(argThat(it -> "user".equals(((CreateUser) it).id().orElse(null))));
+        verify(commands).publish(isA(CreateUser.class));
+        verify(commands).publish(argThat(it -> "user".equals(((CreateUser) it).id().orElse(null))));
         context.completeNow();
     }
 

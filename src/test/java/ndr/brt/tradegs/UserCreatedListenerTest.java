@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 
 class UserCreatedListenerTest {
 
-    private Commands commands = mock(Commands.class);
+    private Bus commands = mock(Bus.class);
     private UserCreatedListener listener;
 
     @BeforeEach
@@ -24,8 +24,8 @@ class UserCreatedListenerTest {
     void launch_fetch_inventory_command() {
         listener.accept(new UserCreated("user"));
 
-        verify(commands).post(new FetchInventory("user"));
-        verify(commands).post(new FetchWantlist("user"));
+        verify(commands).publish(new FetchInventory("user"));
+        verify(commands).publish(new FetchWantlist("user"));
 
     }
 }

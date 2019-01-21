@@ -1,5 +1,12 @@
 package ndr.brt.tradegs;
 
-public interface Handler<T extends Command> {
+import java.util.function.Consumer;
+
+public interface Handler<T extends Command> extends Consumer<T> {
     void handle(T command);
+
+    @Override
+    default void accept(T t) {
+        handle(t);
+    }
 }

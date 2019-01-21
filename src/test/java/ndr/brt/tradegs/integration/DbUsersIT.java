@@ -28,7 +28,7 @@ class DbUsersIT {
 
     @BeforeEach
     void setUp(Vertx vertx) {
-        events = Bus.bus(vertx.eventBus());
+        events = Bus.events(vertx.eventBus());
         users = new DbUsers(events);
     }
 
