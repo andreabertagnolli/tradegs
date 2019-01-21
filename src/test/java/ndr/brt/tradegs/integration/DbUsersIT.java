@@ -4,7 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import ndr.brt.tradegs.Events;
+import ndr.brt.tradegs.Bus;
 import ndr.brt.tradegs.user.DbUsers;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.UserCreated;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DbUsersIT {
 
     private DbUsers users;
-    private Events events;
+    private Bus events;
 
     @BeforeAll
     static void setup() {
@@ -28,7 +28,7 @@ class DbUsersIT {
 
     @BeforeEach
     void setUp(Vertx vertx) {
-        events = Events.bus(vertx.eventBus());
+        events = Bus.bus(vertx.eventBus());
         users = new DbUsers(events);
     }
 

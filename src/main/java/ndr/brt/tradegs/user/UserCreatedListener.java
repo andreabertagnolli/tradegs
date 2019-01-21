@@ -1,7 +1,6 @@
 package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Commands;
-import ndr.brt.tradegs.Events;
 import ndr.brt.tradegs.wantlist.FetchWantlist;
 
 import java.util.function.Consumer;

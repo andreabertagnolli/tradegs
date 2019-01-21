@@ -13,7 +13,7 @@ public class TradegsVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> startFuture) {
-        Events events = Events.bus(vertx.eventBus());
+        Bus events = Bus.bus(vertx.eventBus());
         Commands commands = commands(events);
 
         events.on(UserCreated.class, new UserCreatedListener(commands));

@@ -14,7 +14,7 @@ class EventsBusTest {
     @Test
     @Timeout(1000)
     void executed_publisher_based_on_event_type(Vertx vertx, VertxTestContext context) {
-        Events eventsBus = new EventsBus(vertx.eventBus());
+        Bus eventsBus = new EventsBus(vertx.eventBus());
 
         eventsBus.on(WrongEvent.class, event -> context.failNow(new Exception("It should do nothing")));
         eventsBus.on(RightEvent.class, event -> context.completeNow());
@@ -25,7 +25,7 @@ class EventsBusTest {
     @Test
     @Timeout(1000)
     void handle_more_than_one_consumer(Vertx vertx, VertxTestContext context) {
-        Events eventsBus = new EventsBus(vertx.eventBus());
+        Bus eventsBus = new EventsBus(vertx.eventBus());
 
         Checkpoint checkpoint = context.checkpoint(2);
 

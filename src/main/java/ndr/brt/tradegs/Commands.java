@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public interface Commands {
 
-    static Commands commands(Events events) {
+    static Commands commands(Bus events) {
         return new Instance(events);
     }
 
@@ -26,7 +26,7 @@ public interface Commands {
 
         private final Map<Class, Handler> handlers;
 
-        private Instance(Events events) {
+        private Instance(Bus events) {
 
             DiscogsClient discogsClient = new DiscogsClient();
             IdGenerator idGenerator = () -> UUID.randomUUID().toString();

@@ -4,9 +4,9 @@ import io.vertx.core.eventbus.EventBus;
 
 import java.util.function.Consumer;
 
-public interface Events {
+public interface Bus {
 
-    static Events bus(EventBus bus) {
+    static Bus bus(EventBus bus) {
         return new EventsBus(bus);
     }
 

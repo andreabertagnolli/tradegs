@@ -9,9 +9,9 @@ import org.bson.Document;
 public class DbUsers implements Users {
 
     private final MongoCollection<Document> users;
-    private final Events events;
+    private final Bus events;
 
-    public DbUsers(Events events) {
+    public DbUsers(Bus events) {
         MongoDatabase database = MongoDbConnection.mongoDatabase();
         this.users = database.getCollection("users");
         this.events = events;

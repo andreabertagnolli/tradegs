@@ -6,7 +6,7 @@ import io.vertx.core.eventbus.Message;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class EventsBus implements Events {
+public class EventsBus implements Bus {
     private EventBus bus;
     private Map<String, Consumers> consumers = new HashMap<>();
 
