@@ -23,18 +23,8 @@ public interface Bus {
         return new VertxBus("events", bus);
     }
 
-    static Bus commands(EventBus eventBus, Bus events) {
-        DiscogsClient discogsClient = new DiscogsClient();
-        IdGenerator idGenerator = () -> UUID.randomUUID().toString();
-        DbUsers dbUsers = new DbUsers(events);
-
-        Bus bus = new VertxBus("commands", eventBus);
-
-        bus.on(CreateUser.class, new CreateUserHandler(dbUsers));
-        bus.on(FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(discogsClient, idGenerator, inventories()), dbUsers));
-        bus.on(FetchWantlist.class, new FetchWantlistHandler(new DiscogsWantlistClient(discogsClient, idGenerator, wantlists()), dbUsers));
-
-        return bus;
+    static Bus commands(EventBus eventBus) {
+        return new VertxBus("commands", eventBus);
     }
 
     <T extends Object> void publish(T object);
