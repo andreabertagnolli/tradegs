@@ -10,6 +10,7 @@ import ndr.brt.tradegs.user.*;
 import ndr.brt.tradegs.wantlist.DiscogsWantlistClient;
 import ndr.brt.tradegs.wantlist.FetchWantlist;
 import ndr.brt.tradegs.wantlist.FetchWantlistHandler;
+import org.slf4j.Logger;
 
 import java.util.UUID;
 
@@ -17,8 +18,16 @@ import static ndr.brt.tradegs.Bus.events;
 import static ndr.brt.tradegs.Bus.commands;
 import static ndr.brt.tradegs.inventory.Inventories.inventories;
 import static ndr.brt.tradegs.wantlist.Wantlists.wantlists;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class TradegsVerticle extends AbstractVerticle {
+
+    private final Logger log = getLogger(getClass());
+    private final int httpServerPort;
+
+    public TradegsVerticle(int httpServerPort) {
+        this.httpServerPort = httpServerPort;
+    }
 
     @Override
     public void start(Future<Void> startFuture) {
@@ -39,6 +48,14 @@ public class TradegsVerticle extends AbstractVerticle {
         new CreateUserApi(router, commands).run();
         vertx.createHttpServer()
                 .requestHandler(router)
-                .listen(8080);
+                .listen(httpServerPort, async -> {
+                    if (async.succeeded()) {
+                        log.info("TradegsVerticle started");
+                        startFuture.complete();
+                    } else {
+                        log.error("TradegsVerticle start failed", async.cause());
+                        startFuture.fail(async.cause());
+                    }
+                });
     }
 }

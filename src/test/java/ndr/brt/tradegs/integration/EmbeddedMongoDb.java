@@ -19,11 +19,11 @@ import static ndr.brt.tradegs.MongoDbConnection.host;
 import static ndr.brt.tradegs.MongoDbConnection.port;
 import static org.slf4j.LoggerFactory.getLogger;
 
-class EmbeddedMongoDb {
+public class EmbeddedMongoDb {
 
     private final MongodExecutable executable;
 
-    static void activate() {
+    public static void activate() {
         Instance.INSTANCE.activate();
     }
 

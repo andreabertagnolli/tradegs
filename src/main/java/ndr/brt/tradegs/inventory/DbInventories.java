@@ -17,7 +17,6 @@ public class DbInventories implements Inventories {
 
     public DbInventories() {
         MongoDatabase database = MongoDbConnection.mongoDatabase();
-        database.createCollection("inventories");
         inventories = database.getCollection("inventories");
     }
 
