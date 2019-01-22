@@ -29,7 +29,7 @@ public interface Bus {
 
     <T extends Object> void publish(T object);
 
-    <T extends Object> void on(Class<T> clazz, Consumer<T> consumer);
+    <T> void on(Class<T> clazz, Listener<T> listener);
 
     class Envelope<T> {
 

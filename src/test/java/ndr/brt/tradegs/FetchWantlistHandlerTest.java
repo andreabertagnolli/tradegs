@@ -27,7 +27,7 @@ class FetchWantlistHandlerTest {
         when(wantlistClient.fetch("user")).thenReturn("wantlistId");
         when(users.get("user")).thenReturn(new User().created("user"));
 
-        handler.handle(new FetchWantlist("user"));
+        handler.consume(new FetchWantlist("user"));
 
         verify(users).save(argThat(it -> "wantlistId".equals(it.wantlistId())));
     }

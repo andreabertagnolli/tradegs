@@ -23,7 +23,7 @@ class CreateUserHandlerTest {
     void save_user() {
         when(users.get("user")).thenReturn(new User());
 
-        handler.handle(new CreateUser("user"));
+        handler.consume(new CreateUser("user"));
 
         verify(users).save(argThat(user -> "user".equals(user.id())));
     }
@@ -34,7 +34,7 @@ class CreateUserHandlerTest {
         user.created("user");
         when(users.get("user")).thenReturn(user);
 
-        handler.handle(new CreateUser("user"));
+        handler.consume(new CreateUser("user"));
 
         verify(users, never()).save(any());
     }

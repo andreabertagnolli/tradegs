@@ -27,7 +27,7 @@ class FetchInventoryHandlerTest {
         when(inventoryClient.fetch("user")).thenReturn("inventoryId");
         when(users.get("user")).thenReturn(new User().created("user"));
 
-        handler.handle(new FetchInventory("user"));
+        handler.consume(new FetchInventory("user"));
 
         verify(users).save(argThat(it -> "inventoryId".equals(it.inventoryId())));
     }

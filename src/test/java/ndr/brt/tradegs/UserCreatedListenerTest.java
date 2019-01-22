@@ -22,7 +22,7 @@ class UserCreatedListenerTest {
 
     @Test
     void launch_fetch_inventory_command() {
-        listener.accept(new UserCreated("user"));
+        listener.consume(new UserCreated("user"));
 
         verify(commands).publish(new FetchInventory("user"));
         verify(commands).publish(new FetchWantlist("user"));

@@ -1,10 +1,10 @@
 package ndr.brt.tradegs.wantlist;
 
-import ndr.brt.tradegs.Handler;
+import ndr.brt.tradegs.Listener;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.Users;
 
-public class FetchWantlistHandler implements Handler<FetchWantlist> {
+public class FetchWantlistHandler implements Listener<FetchWantlist> {
     private final WantlistClient wantlistClient;
     private final Users users;
 
@@ -14,7 +14,7 @@ public class FetchWantlistHandler implements Handler<FetchWantlist> {
     }
 
     @Override
-    public void handle(FetchWantlist command) {
+    public void consume(FetchWantlist command) {
         User user = users.get(command.userId());
         String inventoryId = wantlistClient.fetch(command.userId());
 

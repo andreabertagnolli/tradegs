@@ -1,8 +1,8 @@
 package ndr.brt.tradegs.user;
 
-import ndr.brt.tradegs.Handler;
+import ndr.brt.tradegs.Listener;
 
-public class CreateUserHandler implements Handler<CreateUser> {
+public class CreateUserHandler implements Listener<CreateUser> {
 
     private final Users users;
 
@@ -11,7 +11,7 @@ public class CreateUserHandler implements Handler<CreateUser> {
     }
 
     @Override
-    public void handle(CreateUser command) {
+    public void consume(CreateUser command) {
         String id = command.id().get();
         User user = users.get(id);
 

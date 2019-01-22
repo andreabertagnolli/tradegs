@@ -1,13 +1,12 @@
 package ndr.brt.tradegs.user;
 
 import ndr.brt.tradegs.Bus;
+import ndr.brt.tradegs.Listener;
 import ndr.brt.tradegs.wantlist.FetchWantlist;
-
-import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 
-public class UserCreatedListener implements Consumer<UserCreated> {
+public class UserCreatedListener implements Listener<UserCreated> {
 
     private final Bus commands;
 
@@ -16,7 +15,7 @@ public class UserCreatedListener implements Consumer<UserCreated> {
     }
 
     @Override
-    public void accept(UserCreated userCreated) {
+    public void consume(UserCreated userCreated) {
         String id = userCreated.id();
         asList(new FetchInventory(id), new FetchWantlist(id))
                 .forEach(commands::publish);

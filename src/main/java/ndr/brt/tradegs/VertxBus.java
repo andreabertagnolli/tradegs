@@ -3,8 +3,6 @@ package ndr.brt.tradegs;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 
-import java.util.function.Consumer;
-
 public class VertxBus implements Bus {
 
     private final String address;
@@ -22,12 +20,12 @@ public class VertxBus implements Bus {
     }
 
     @Override
-    public void on(Class clazz, Consumer consumer) {
+    public <T> void on(Class<T> clazz, Listener<T> listener) {
         bus.consumer(address, (Message<String> message) -> {
             Envelope envelope = Json.fromJson(message.body(), Envelope.class);
             if (clazz.getSimpleName().equals(envelope.type)) {
-                Object object = Json.fromJson(envelope.json, clazz);
-                consumer.accept(object);
+                T object = Json.fromJson(envelope.json, clazz);
+                listener.consume(object);
             }
         });
     }
