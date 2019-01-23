@@ -45,20 +45,6 @@ public class DiscogsClient implements Discogs {
                 .collect(Collectors.toList());
     }
 
-    private final GetPage<WantlistPage> getWantlistPage = (userId, pageNumber) -> {
-        log.info("Request wantlist page {}", pageNumber);
-        String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("User-Agent", "Tradegs")
-                .GET().build();
-
-        String json = executor
-                .execute(request)
-                .body();
-
-        return Json.fromJson(json, WantlistPage.class);
-    };
-
     private class GetListingPage implements GetPage<ListingPage> {
 
         @Override
