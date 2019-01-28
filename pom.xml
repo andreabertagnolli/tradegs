@@ -10,9 +10,9 @@
 
     <properties>
         <assertj.version>3.11.1</assertj.version>
-        <awaitility.version>3.1.5</awaitility.version>
+        <awaitility.version>3.1.6</awaitility.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
-        <junit.version>5.4.0-M1</junit.version>
+        <junit.version>5.4.0-RC1</junit.version>
         <mockito.version>2.23.4</mockito.version>
         <mongo-java-driver.version>3.9.1</mongo-java-driver.version>
         <vertx.version>3.6.2</vertx.version>

@@ -59,7 +59,7 @@ class TradegsAT {
 
     @Test
     @Timeout(5000)
-    void name(VertxTestContext context) throws InterruptedException {
+    void name(VertxTestContext context) {
         when(discogs.inventory("frank_navetta")).thenReturn(List.of(new Listing(1234)));
         when(discogs.wantlist("frank_navetta")).thenReturn(List.of(new Want(4321)));
 
@@ -68,7 +68,7 @@ class TradegsAT {
 
         httpClient.post(HTTP_PORT, "localhost", "/users")
             .handler(response -> response.bodyHandler(body -> log.info("Response: {}", body)))
-            .end(Json.toJson(new CreateUser("smellymilk")));
+            .end(Json.toJson(new CreateUser("frank_navetta")));
 
         await().atMost(5, SECONDS).untilAsserted(() -> {
             httpClient.get(HTTP_PORT, "localhost", "/matches/frank_navetta")
