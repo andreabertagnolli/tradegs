@@ -10,4 +10,6 @@ public interface Wantlists {
     }
 
     void save(String id, List<Want> wants);
+
+    List<Want> get(String user);
 }

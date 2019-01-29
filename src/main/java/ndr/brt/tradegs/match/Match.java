@@ -23,4 +23,14 @@ public class Match {
         give.add(listing);
         return this;
     }
+
+    public Match give(List<Listing> give) {
+        this.give.addAll(give);
+        return this;
+    }
+
+    public Match get(List<Listing> get) {
+        this.get.addAll(get);
+        return this;
+    }
 }

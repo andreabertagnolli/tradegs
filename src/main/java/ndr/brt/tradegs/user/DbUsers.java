@@ -6,6 +6,8 @@ import com.mongodb.client.MongoDatabase;
 import ndr.brt.tradegs.*;
 import org.bson.Document;
 
+import java.util.List;
+
 public class DbUsers implements Users {
 
     private final MongoCollection<Document> users;
@@ -38,6 +40,12 @@ public class DbUsers implements Users {
             });
 
         return user;
+    }
+
+    @Override
+    public List<String> except(String user) {
+        // TODO: implement me
+        return null;
     }
 
 }

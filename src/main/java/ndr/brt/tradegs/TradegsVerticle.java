@@ -45,7 +45,7 @@ public class TradegsVerticle extends AbstractVerticle {
         commands.on(FetchWantlist.class, new FetchWantlistHandler(new DiscogsWantlistClient(discogs, idGenerator, wantlists()), dbUsers));
 
         events.on(UserCreated.class, new UserCreatedListener(commands));
-        Matches matches = Matches.asRealTime();
+        Matches matches = Matches.asRealTime(events);
 
         Router router = Router.router(vertx);
         new CreateUserApi(router, commands).run();

@@ -1,11 +1,47 @@
 package ndr.brt.tradegs.match;
 
-import java.util.Collections;
+import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Want;
+import ndr.brt.tradegs.inventory.Inventories;
+import ndr.brt.tradegs.user.Users;
+import ndr.brt.tradegs.wantlist.Wantlists;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class RealTimeMatches implements Matches {
+    private final Users users;
+    private final Wantlists wantlists;
+    private final Inventories inventories;
+
+    public RealTimeMatches(Users users, Wantlists wantlists, Inventories inventories) {
+        this.users = users;
+        this.wantlists = wantlists;
+        this.inventories = inventories;
+    }
+
     @Override
-    public List<Match> get(String anUser) {
-        return Collections.emptyList();
+    public List<Match> get(String user) {
+        List<Match> matches = new ArrayList<>();
+        List<Want> myWants = wantlists.get(user);
+        List<Listing> myListings = inventories.get(user);
+        List<String> users = this.users.except(user);
+
+        for (String other : users) {
+            List<Want> otherWants = wantlists.get(other);
+            List<Listing> otherListings = inventories.get(other);
+
+            List<Listing> get = otherListings.stream().filter(listing -> myWants.stream().map(Want::id).collect(toList()).contains(listing.id())).collect(toList());
+            List<Listing> give = myListings.stream().filter(listing -> otherWants.stream().map(Want::id).collect(toList()).contains(listing.id())).collect(toList());
+
+            if (!get.isEmpty() && !give.isEmpty()) {
+                matches.add(new Match(other).give(give).get(get));
+            }
+        }
+
+        return matches;
     }
 }

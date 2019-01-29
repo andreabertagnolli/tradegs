@@ -11,4 +11,6 @@ public interface Inventories {
     }
 
     void save(String id, List<Listing> listings);
+
+    List<Listing> get(String user);
 }
