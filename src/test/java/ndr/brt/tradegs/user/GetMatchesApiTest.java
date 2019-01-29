@@ -7,7 +7,6 @@ import io.vertx.junit5.VertxExtension;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.match.Match;
 import ndr.brt.tradegs.match.Matches;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(VertxExtension.class)
@@ -34,7 +34,7 @@ class GetMatchesApiTest {
 
     @Test
     void get_matches() {
-        Match match = new Match().userOne(new Listing(1234)).userTwo(new Listing(4321));
+        Match match = new Match("anotherUser").get(new Listing(1234)).give(new Listing(4321));
         when(matches.get("anUser")).thenReturn(List.of(match));
 
         given()
@@ -44,7 +44,10 @@ class GetMatchesApiTest {
         .then()
             .statusCode(200)
             .contentType(ContentType.JSON)
-            .body("[0].userOne[0].id", CoreMatchers.is(1234));
+            .body("[0].with", is("anotherUser"))
+            .body("[0].get[0].id", is(1234))
+            .body("[0].give[0].id", is(4321))
+        ;
 
         verify(matches).get("anUser");
     }

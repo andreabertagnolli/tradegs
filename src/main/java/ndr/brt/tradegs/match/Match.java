@@ -6,16 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Match {
-    private final List<Listing> userOne = new ArrayList<>();
-    private final List<Listing> userTwo = new ArrayList<>();
+    private final List<Listing> get = new ArrayList<>();
+    private final List<Listing> give = new ArrayList<>();
+    private String with;
 
-    public Match userOne(Listing listing) {
-        userOne.add(listing);
+    public Match(String with) {
+        this.with = with;
+    }
+
+    public Match get(Listing listing) {
+        get.add(listing);
         return this;
     }
 
-    public Match userTwo(Listing listing) {
-        userTwo.add(listing);
+    public Match give(Listing listing) {
+        give.add(listing);
         return this;
     }
 }
