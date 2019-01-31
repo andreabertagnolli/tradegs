@@ -21,7 +21,7 @@ public class DiscogsWantlistClient implements WantlistClient {
     public String fetch(String user) {
         List<Want> wants = discogs.wantlist(user);
         String wantlistId = idGenerator.generate();
-        wantlists.save(wantlistId, wants);
+        wantlists.save(user, wants);
         return wantlistId;
     }
 }

@@ -7,9 +7,13 @@ import ndr.brt.tradegs.MongoDbConnection;
 import ndr.brt.tradegs.discogs.api.Want;
 import org.bson.Document;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 public class DbWantlists implements Wantlists {
 
@@ -29,10 +33,11 @@ public class DbWantlists implements Wantlists {
     }
 
     public List<Want> get(String id) {
-        return wantlists.find(new Document("id", id))
+        return ofNullable(wantlists.find(new Document("id", id))
                 .map(Document::toJson)
                 .map(it -> Json.fromJson(it, Wantlist.class))
                 .map(Wantlist::wants)
-                .first();
+                .first())
+                .orElse(emptyList());
     }
 }

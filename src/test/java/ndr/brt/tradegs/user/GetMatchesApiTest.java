@@ -5,6 +5,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.junit5.VertxExtension;
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Release;
 import ndr.brt.tradegs.match.Match;
 import ndr.brt.tradegs.match.Matches;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ class GetMatchesApiTest {
 
     @Test
     void get_matches() {
-        Match match = new Match("anotherUser").get(new Listing(1234)).give(new Listing(4321));
+        Match match = new Match("anotherUser").get(new Listing(7655483, new Release(1234))).give(new Listing(873215436, new Release(4321)));
         when(matches.get("anUser")).thenReturn(List.of(match));
 
         given()
@@ -45,8 +46,8 @@ class GetMatchesApiTest {
             .statusCode(200)
             .contentType(ContentType.JSON)
             .body("[0].with", is("anotherUser"))
-            .body("[0].get[0].id", is(1234))
-            .body("[0].give[0].id", is(4321))
+            .body("[0].get[0].release.id", is(1234))
+            .body("[0].give[0].release.id", is(4321))
         ;
 
         verify(matches).get("anUser");

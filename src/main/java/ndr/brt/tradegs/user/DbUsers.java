@@ -7,6 +7,9 @@ import ndr.brt.tradegs.*;
 import org.bson.Document;
 
 import java.util.List;
+import java.util.Spliterator;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class DbUsers implements Users {
 
@@ -44,8 +47,14 @@ public class DbUsers implements Users {
 
     @Override
     public List<String> except(String user) {
-        // TODO: implement me
-        return null;
+        Spliterator<User> spliterator = users.find()
+                .map(it -> it.get("id", String.class))
+                .map(it -> new User().created(it)).spliterator();
+
+        return StreamSupport.stream(spliterator, false)
+                .filter(it -> !user.equals(it.id()))
+                .map(User::id)
+                .collect(Collectors.toList());
     }
 
 }

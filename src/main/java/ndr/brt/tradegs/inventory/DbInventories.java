@@ -7,9 +7,12 @@ import ndr.brt.tradegs.MongoDbConnection;
 import ndr.brt.tradegs.discogs.api.Listing;
 import org.bson.Document;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static java.util.Collections.emptyList;
 
 public class DbInventories implements Inventories {
 
@@ -29,10 +32,11 @@ public class DbInventories implements Inventories {
     }
 
     public List<Listing> get(String id) {
-        return inventories.find(new Document("id", id))
+        return Optional.ofNullable(inventories.find(new Document("id", id))
                 .map(Document::toJson)
                 .map(it -> Json.fromJson(it, Inventory.class))
                 .map(Inventory::listings)
-                .first();
+                .first())
+                .orElse(emptyList());
     }
 }

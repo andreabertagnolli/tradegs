@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.match;
 
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Release;
 import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.Inventories;
 import ndr.brt.tradegs.user.Users;
@@ -44,12 +45,12 @@ class RealTimeMatchesTest {
     @Test
     void simple_match() {
         when(wantlists.get("user")).thenReturn(singletonList(new Want(2345)));
-        when(inventories.get("user")).thenReturn(singletonList(new Listing(12345)));
+        when(inventories.get("user")).thenReturn(singletonList(new Listing(987654, new Release(12345))));
         when(users.except("user")).thenReturn(asList("frankie", "jodie"));
         when(wantlists.get("frankie")).thenReturn(singletonList(new Want(12345)));
         when(wantlists.get("jodie")).thenReturn(emptyList());
-        when(inventories.get("frankie")).thenReturn(singletonList(new Listing(2345)));
-        when(inventories.get("jodie")).thenReturn(singletonList(new Listing(7765)));
+        when(inventories.get("frankie")).thenReturn(singletonList(new Listing(74364, new Release(2345))));
+        when(inventories.get("jodie")).thenReturn(singletonList(new Listing(58652543, new Release(7765))));
 
         List<Match> matches = this.matches.get("user");
 

@@ -2,6 +2,7 @@ package ndr.brt.tradegs;
 
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Release;
 import ndr.brt.tradegs.inventory.DiscogsInventoryClient;
 import ndr.brt.tradegs.inventory.IdGenerator;
 import ndr.brt.tradegs.inventory.Inventories;
@@ -23,7 +24,7 @@ class DiscogsInventoryClientTest {
     @Test
     void fetch_listings_from_discogs_persist_it_and_return_the_key() {
         List<Listing> listings = asList(
-                new Listing(12), new Listing(13)
+                new Listing(12, new Release(4321)), new Listing(13, new Release(6432))
         );
         when(discogs.inventory("utente")).thenReturn(listings);
         when(idGenerator.generate()).thenReturn("idInventory");
@@ -33,6 +34,6 @@ class DiscogsInventoryClientTest {
         String result = inventory.fetch("utente");
 
         assertThat(result, is("idInventory"));
-        verify(inventories).save("idInventory", listings);
+        verify(inventories).save("utente", listings);
     }
 }

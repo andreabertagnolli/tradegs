@@ -4,21 +4,15 @@ import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 
-public class Listing {
+public class Release {
     private final int id;
-    private final Release release;
 
-    public Listing(int id, Release release) {
+    public Release(int id) {
         this.id = id;
-        this.release = release;
     }
 
     public int id() {
         return id;
-    }
-
-    public Release release() {
-        return release;
     }
 
     @Override

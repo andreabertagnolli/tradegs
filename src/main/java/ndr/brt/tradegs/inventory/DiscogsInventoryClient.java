@@ -21,7 +21,7 @@ public class DiscogsInventoryClient implements InventoryClient {
     public String fetch(String user) {
         List<Listing> listings = discogs.inventory(user);
         String inventoryId = idGenerator.generate();
-        inventories.save(inventoryId, listings);
+        inventories.save(user, listings);
         return inventoryId;
     }
 }

@@ -34,7 +34,7 @@ class DiscogsWantlistClientTest {
         String result = wantlist.fetch("utente");
 
         assertThat(result, is("idWantlist"));
-        verify(wantlists).save("idWantlist", wants);
+        verify(wantlists).save("utente", wants);
     }
 
 }

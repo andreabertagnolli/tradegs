@@ -8,7 +8,6 @@ import ndr.brt.tradegs.wantlist.Wantlists;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,7 +25,9 @@ public class RealTimeMatches implements Matches {
     @Override
     public List<Match> get(String user) {
         List<Match> matches = new ArrayList<>();
-        List<Want> myWants = wantlists.get(user);
+        List<Integer> myWantsIds = wantlists.get(user).stream()
+                .map(Want::id)
+                .collect(toList());
         List<Listing> myListings = inventories.get(user);
         List<String> users = this.users.except(user);
 
@@ -34,8 +35,8 @@ public class RealTimeMatches implements Matches {
             List<Want> otherWants = wantlists.get(other);
             List<Listing> otherListings = inventories.get(other);
 
-            List<Listing> get = otherListings.stream().filter(listing -> myWants.stream().map(Want::id).collect(toList()).contains(listing.id())).collect(toList());
-            List<Listing> give = myListings.stream().filter(listing -> otherWants.stream().map(Want::id).collect(toList()).contains(listing.id())).collect(toList());
+            List<Listing> get = otherListings.stream().filter(listing -> myWantsIds.contains(listing.release().id())).collect(toList());
+            List<Listing> give = myListings.stream().filter(listing -> otherWants.stream().map(Want::id).collect(toList()).contains(listing.release().id())).collect(toList());
 
             if (!get.isEmpty() && !give.isEmpty()) {
                 matches.add(new Match(other).give(give).get(get));

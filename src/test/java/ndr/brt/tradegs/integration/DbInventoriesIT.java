@@ -1,35 +1,40 @@
 package ndr.brt.tradegs.integration;
 
 import ndr.brt.tradegs.discogs.api.Listing;
+import ndr.brt.tradegs.discogs.api.Release;
 import ndr.brt.tradegs.inventory.DbInventories;
-import ndr.brt.tradegs.inventory.IdGenerator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DbInventoriesIT {
 
+    private DbInventories inventories;
+
     @BeforeEach
     void setUp() {
         EmbeddedMongoDb.activate();
+        inventories = new DbInventories();
     }
 
     @Test
     void store_and_retrieve() {
-        DbInventories inventories = new DbInventories();
-        String id = IdGenerator.uuidGenerator().generate();
+        String id = "tv_smith";
 
-        inventories.save(id, asList(new Listing(150899904)));
+        inventories.save(id, asList(new Listing(150899904, new Release(1355))));
 
         List<Listing> listings = inventories.get(id);
-        assertThat(listings, hasSize(1));
+        assertThat(listings).hasSize(1);
         assertEquals(150899904, listings.get(0).id());
+    }
+
+    @Test
+    void when_theres_no_inventories_return_empty_list() {
+        assertThat(inventories.get("duncan_redmonds")).isEmpty();
     }
 }
