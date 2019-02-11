@@ -2,8 +2,11 @@ package ndr.brt.tradegs;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClient;
 import io.vertx.ext.web.Router;
 import ndr.brt.tradegs.discogs.Discogs;
+import ndr.brt.tradegs.discogs.DiscogsClient;
 import ndr.brt.tradegs.inventory.DiscogsInventoryClient;
 import ndr.brt.tradegs.inventory.IdGenerator;
 import ndr.brt.tradegs.match.Matches;
@@ -62,4 +65,5 @@ public class TradegsVerticle extends AbstractVerticle {
                     }
                 });
     }
+
 }
