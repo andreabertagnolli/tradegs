@@ -1,10 +1,8 @@
 package ndr.brt.tradegs.wantlist;
 
+import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.Discogs;
-import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.IdGenerator;
-
-import java.util.List;
 
 public class DiscogsWantlistClient implements WantlistClient {
     private final Discogs discogs;
@@ -18,10 +16,18 @@ public class DiscogsWantlistClient implements WantlistClient {
     }
 
     @Override
-    public String fetch(String user) {
-        List<Want> wants = discogs.wantlist(user);
-        String wantlistId = idGenerator.generate();
-        wantlists.save(user, wants);
-        return wantlistId;
+    public Future<String> fetch(String user) {
+        Future<String> future = Future.future();
+        discogs.wantlist(user).setHandler(async -> {
+            if (async.succeeded()) {
+                String inventoryId = idGenerator.generate();
+                wantlists.save(user, async.result());
+                future.complete(inventoryId);
+            } else {
+                future.fail(future.cause());
+            }
+        });
+
+        return future;
     }
 }

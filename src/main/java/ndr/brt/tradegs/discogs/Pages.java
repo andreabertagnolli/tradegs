@@ -1,54 +1,55 @@
 package ndr.brt.tradegs.discogs;
 
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Page;
 
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class Pages<T extends Page> implements Iterable<T> {
+public class Pages<T extends Page> {
 
     private final GetPage<T> getPage;
-    private PageIterator iterator;
 
     public Pages(GetPage<T> getPage) {
         this.getPage = getPage;
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return iterator;
-    }
+    public Future<List<T>> getFor(String userId) {
+        Future<List<T>> future = Future.future();
 
-    public Stream<T> getFor(String userId) {
-        iterator = new PageIterator(userId);
-        return StreamSupport.stream(this.spliterator(), false);
-    }
+        getPage.apply(userId, 1).setHandler(async -> {
+            if (async.succeeded()) {
+                T first = async.result();
+                int totalPages = first.pages();
 
-    private class PageIterator implements Iterator<T> {
-        private boolean hasNext;
-        private int page;
-        private final String userId;
+                List<Future> futures = IntStream
+                        .range(2, totalPages)
+                        .mapToObj(it -> getPage.apply(userId, it))
+                        .collect(Collectors.toList());
 
-        PageIterator(String userId) {
-            this.userId = userId;
-            this.hasNext = true;
-            this.page = 1;
-        }
+                CompositeFuture.all(futures).setHandler(it -> {
+                    if (it.succeeded()) {
+                        CompositeFuture result = it.result();
+                        List pages = IntStream
+                                .range(0, result.size())
+                                .mapToObj(result::resultAt)
+                                .map(Page.class::cast)
+                                .collect(Collectors.toList());
 
-        @Override
-        public boolean hasNext() {
-            return hasNext;
-        }
+                        List<T> total = new ArrayList<>();
+                        total.add(first);
+                        total.addAll(pages);
+                        future.complete(total);
+                    } else {
+                        future.fail(it.cause());
+                    }
+                });
+            }
+        });
 
-        @Override
-        public T next() {
-            T current = getPage.apply(userId, page);
-
-            hasNext = current.page() < current.pages();
-            page = current.page() + 1;
-
-            return current;
-        }
+        return future;
     }
 }

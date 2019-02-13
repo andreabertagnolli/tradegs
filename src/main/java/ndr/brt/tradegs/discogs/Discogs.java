@@ -1,12 +1,14 @@
 package ndr.brt.tradegs.discogs;
 
+import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.Want;
 
 import java.util.List;
 
 public interface Discogs {
-    List<Listing> inventory(String utente);
 
-    List<Want> wantlist(String utente);
+    Future<List<Listing>> inventory(String user);
+
+    Future<List<Want>> wantlist(String user);
 }

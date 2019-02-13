@@ -1,5 +1,6 @@
 package ndr.brt.tradegs.acceptance;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.junit5.Timeout;
@@ -56,11 +57,11 @@ class TradegsAT {
     @Test
     @Timeout(5000)
     void name(VertxTestContext context) {
-        when(discogs.inventory("frank_navetta")).thenReturn(List.of(new Listing(7642143, new Release(1234))));
-        when(discogs.wantlist("frank_navetta")).thenReturn(List.of(new Want(4321)));
+        when(discogs.inventory("frank_navetta")).thenReturn(Future.succeededFuture(List.of(new Listing(7642143, new Release(1234)))));
+        when(discogs.wantlist("frank_navetta")).thenReturn(Future.succeededFuture(List.of(new Want(4321))));
 
-        when(discogs.inventory("darby_crash")).thenReturn(List.of(new Listing(32254565, new Release(4321))));
-        when(discogs.wantlist("darby_crash")).thenReturn(List.of(new Want(1234)));
+        when(discogs.inventory("darby_crash")).thenReturn(Future.succeededFuture(List.of(new Listing(32254565, new Release(4321)))));
+        when(discogs.wantlist("darby_crash")).thenReturn(Future.succeededFuture(List.of(new Want(1234))));
 
         httpClient.post(HTTP_PORT, "localhost", "/users")
                 .handler(response -> response.bodyHandler(body -> log.info("Response: {}", body)))

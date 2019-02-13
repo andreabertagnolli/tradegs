@@ -66,4 +66,30 @@ public class TradegsVerticle extends AbstractVerticle {
                 });
     }
 
+    public static void main(String[] args) {
+        Vertx vertx = Vertx.vertx();
+        int httpServerPort = 8080;
+
+        vertx.deployVerticle(new TradegsVerticle(httpServerPort, new DiscogsClient(vertx)), async -> {
+            if (async.failed()) {
+                async.cause().printStackTrace();
+            } else {
+                HttpClient httpClient = vertx.createHttpClient();
+
+                httpClient.post(httpServerPort, "localhost", "/users")
+                        .handler(response -> response.bodyHandler(body -> System.out.println("Response: " + body)))
+                        .end(Json.toJson(new CreateUser("smellymilk")));
+
+                httpClient.post(httpServerPort, "localhost", "/users")
+                        .handler(response -> response.bodyHandler(body -> System.out.println("Response: " + body)))
+                        .end(Json.toJson(new CreateUser("thai80")));
+
+                vertx.setPeriodic(5000, it -> {
+                    httpClient.get(httpServerPort, "localhost", "/matches/smellymilk")
+                            .handler(response -> response.bodyHandler(System.out::println))
+                            .end();
+                });
+            }
+        });
+    }
 }

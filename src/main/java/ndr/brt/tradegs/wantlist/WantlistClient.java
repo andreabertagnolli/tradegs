@@ -1,5 +1,7 @@
 package ndr.brt.tradegs.wantlist;
 
+import io.vertx.core.Future;
+
 public interface WantlistClient {
-    String fetch(String user);
+    Future<String> fetch(String user);
 }

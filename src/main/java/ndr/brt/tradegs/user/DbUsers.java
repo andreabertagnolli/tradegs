@@ -8,6 +8,7 @@ import org.bson.Document;
 
 import java.util.List;
 import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,7 +37,7 @@ public class DbUsers implements Users {
     public User get(String id) {
         User user = new User();
 
-        users.find(new Document("id", id)).forEach((Block<Document>) it -> {
+        users.find(new Document("id", id)).forEach((Consumer<Document>) it -> {
                 Class<? extends Event> clazz = EventClasses.get(it.get("type", String.class));
                 Event event = Json.fromJson(it.toJson(), clazz);
                 user.apply(event);

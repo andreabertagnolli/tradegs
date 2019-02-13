@@ -5,10 +5,8 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
 
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public enum MongoDbConnection {
     MongoDbConnection;
@@ -17,14 +15,17 @@ public enum MongoDbConnection {
     private final MongoClient client;
     private final String host;
     private final Integer port;
+    private final String database;
 
     MongoDbConnection() {
         host = properties.getString("host");
         port = Integer.valueOf(properties.getString("port"));
-        MongoCredential mongoCredential = MongoCredential.createCredential("test", "test", "test".toCharArray());
+        database = properties.getString("database");
+        String username = properties.getString("username");
+        String password = properties.getString("password");
+        MongoCredential mongoCredential = MongoCredential.createCredential(username, database, password.toCharArray());
         ServerAddress serverAddress = new ServerAddress(host, port);
         client = new MongoClient(serverAddress, mongoCredential, MongoClientOptions.builder().build());
-        client.listDatabases().forEach((Consumer<? super Document>) it -> System.out.println(it.toString()));
     }
 
     public static String host() {
@@ -36,7 +37,7 @@ public enum MongoDbConnection {
     }
 
     private MongoDatabase database() {
-        return client.getDatabase(properties.getString("database"));
+        return client.getDatabase(database);
     }
 
     public static MongoDatabase mongoDatabase() {

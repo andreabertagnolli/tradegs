@@ -1,5 +1,6 @@
 package ndr.brt.tradegs;
 
+import io.vertx.core.Future;
 import ndr.brt.tradegs.inventory.InventoryClient;
 import ndr.brt.tradegs.user.FetchInventory;
 import ndr.brt.tradegs.user.FetchInventoryHandler;
@@ -24,7 +25,7 @@ class FetchInventoryHandlerTest {
 
     @Test
     void fetch_inventory() {
-        when(inventoryClient.fetch("user")).thenReturn("inventoryId");
+        when(inventoryClient.fetch("user")).thenReturn(Future.succeededFuture("inventoryId"));
         when(users.get("user")).thenReturn(new User().created("user"));
 
         handler.consume(new FetchInventory("user"));
