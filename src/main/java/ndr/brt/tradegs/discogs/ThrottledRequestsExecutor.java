@@ -1,7 +1,6 @@
 package ndr.brt.tradegs.discogs;
 
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -10,6 +9,10 @@ import java.math.BigDecimal;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.lang.Math.max;
@@ -20,43 +23,43 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class ThrottledRequestsExecutor implements RequestsExecutor {
 
+    private static final int THROTTLE_DELAY = 2400;
     private final Logger log = getLogger(getClass());
-    private AtomicLong throttleMillis = new AtomicLong(1);
     private final HttpClient http;
-    private Vertx vertx;
+    private BlockingQueue<RequestHandler> queue;
 
     ThrottledRequestsExecutor(Vertx vertx) {
-        this.vertx = vertx;
+        queue = new LinkedBlockingQueue<>();
         http = newHttpClient();
-    }
-    
-    @Override
-    public Future<HttpResponse<String>> execute(HttpRequest request) {
-        Future<HttpResponse<String>> future = Future.future();
 
-        long delay = max(1, throttleMillis.get());
-        log.info("Wait {} milliseconds before the next request", delay);
-        vertx.setTimer(delay, time -> {
-            try {
-                log.info("Send request: {}", request);
-                http.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
-                    response.headers().firstValue("x-discogs-ratelimit")
-                            .map(NumberUtils::createLong)
-                            .map(BigDecimal::valueOf)
-                            .map(it -> valueOf(60).divide(it))
-                            .map(it -> it.multiply(valueOf(1000)))
-                            .map(BigDecimal::longValue)
-                            .ifPresent(it -> throttleMillis.set(it));
-
-                    future.complete(response);
-                });
-
-            } catch (Exception e) {
-                log.error("Error http request", e);
-                future.fail(e);
+        vertx.setPeriodic(THROTTLE_DELAY, time -> {
+            RequestHandler handler = queue.poll();
+            if (handler != null) {
+                log.info("Send request: {}", handler.request);
+                http.sendAsync(handler.request, HttpResponse.BodyHandlers.ofString())
+                        .thenAccept(handler.future::complete);
             }
         });
+    }
 
-        return future;
+    @Override
+    public Future<HttpResponse<String>> execute(HttpRequest request) {
+        try {
+            Future<HttpResponse<String>> future = Future.future();
+            queue.put(new RequestHandler(request, future));
+            return future;
+        } catch (Exception e) {
+            return Future.failedFuture(e);
+        }
+    }
+
+    private static class RequestHandler {
+        private final HttpRequest request;
+        private final Future<HttpResponse<String>> future;
+
+        private RequestHandler(HttpRequest request, Future<HttpResponse<String>> future) {
+            this.request = request;
+            this.future = future;
+        }
     }
 }

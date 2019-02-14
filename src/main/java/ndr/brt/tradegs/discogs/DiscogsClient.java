@@ -73,7 +73,7 @@ public class DiscogsClient implements Discogs {
             log.info("Request inventory page {}", pageNumber);
             String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                    .header("User-Agent", "Tradegs")
+                    .header("User-Agent", "Tradegs/0.1")
                     .GET().build();
 
             Future<ListingPage> future = Future.future();
@@ -98,7 +98,7 @@ public class DiscogsClient implements Discogs {
             log.info("Request wantlist page {}", pageNumber);
             String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                    .header("User-Agent", "Tradegs")
+                    .header("User-Agent", "Tradegs/0.1")
                     .GET().build();
 
             Future<WantlistPage> future = Future.future();
