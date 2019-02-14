@@ -29,7 +29,7 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
         this.vertx = vertx;
         http = newHttpClient();
     }
-
+    
     @Override
     public Future<HttpResponse<String>> execute(HttpRequest request) {
         Future<HttpResponse<String>> future = Future.future();
@@ -39,18 +39,18 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
         vertx.setTimer(delay, time -> {
             try {
                 log.info("Send request: {}", request);
-                // TODO: can we make the request async?
-                HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
+                http.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenAccept(response -> {
+                    response.headers().firstValue("x-discogs-ratelimit")
+                            .map(NumberUtils::createLong)
+                            .map(BigDecimal::valueOf)
+                            .map(it -> valueOf(60).divide(it))
+                            .map(it -> it.multiply(valueOf(1000)))
+                            .map(BigDecimal::longValue)
+                            .ifPresent(it -> throttleMillis.set(it));
 
-                response.headers().firstValue("x-discogs-ratelimit")
-                        .map(NumberUtils::createLong)
-                        .map(BigDecimal::valueOf)
-                        .map(it -> valueOf(60).divide(it))
-                        .map(it -> it.multiply(valueOf(1000)))
-                        .map(BigDecimal::longValue)
-                        .ifPresent(it -> throttleMillis.set(it));
+                    future.complete(response);
+                });
 
-                future.complete(response);
             } catch (Exception e) {
                 log.error("Error http request", e);
                 future.fail(e);
