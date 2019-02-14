@@ -1,17 +1,24 @@
 package ndr.brt.tradegs.integration;
 
+import com.mongodb.*;
+import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import ndr.brt.tradegs.Json;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static de.flapdoodle.embed.mongo.MongodStarter.getDefaultInstance;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
@@ -48,6 +55,7 @@ public class EmbeddedMongoDb {
             config = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
                     .net(new Net(host(), port(), localhostIsIPv6()))
+                    .cmdOptions(new MongoCmdOptionsBuilder().build())
                     .build();
             MongodStarter instance = MongodStarter.getDefaultInstance();
             executable = instance.prepare(config);
@@ -59,9 +67,23 @@ public class EmbeddedMongoDb {
     private void start() {
         try {
             executable.start();
-        } catch (IOException e) {
+            createUser("test", "test", List.of("readWrite"));
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void createUser(String name, String password, List<String> roles) {
+        MongoClient mongo = new MongoClient(host(), port());
+
+        mongo.getDatabase("test")
+            .runCommand(
+                new BasicDBObject("createUser", name)
+                    .append("pwd", password)
+                    .append("roles", roles)
+            );
+
+        mongo.close();
     }
 
 }
