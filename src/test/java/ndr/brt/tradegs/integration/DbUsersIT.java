@@ -54,4 +54,16 @@ class DbUsersIT {
         assertThat(user.changes().count()).isEqualTo(0L);
         context.completeNow();
     }
+
+    @Test
+    @Timeout(1000)
+    void save_snapshots_and_get_stream(VertxTestContext context) {
+        User user = new User().created("sattad");
+
+        users.save(user);
+
+        assertThat(users.stream().count()).isEqualTo(1);
+        context.completeNow();
+    }
+
 }

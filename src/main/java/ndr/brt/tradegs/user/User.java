@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public class User {
 
     private String id;
-    private List<Event> changes = new ArrayList<>();
+    transient private List<Event> changes = new ArrayList<>();
     private String inventoryId;
     private String wantlistId;
 
