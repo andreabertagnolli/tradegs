@@ -13,6 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
@@ -62,7 +67,26 @@ class DbUsersIT {
 
         users.save(user);
 
-        assertThat(users.stream().count()).isEqualTo(1);
+        List<User> results = users.stream().collect(toList());
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).id()).isEqualTo("sattad");
+        context.completeNow();
+    }
+
+    @Test
+    @Timeout(1000)
+    void update_snapshot(VertxTestContext context) {
+        User user = new User().created("sattad");
+
+        users.save(user);
+
+        user.inventoryFetched("inventoryId");
+
+        users.save(user);
+
+        List<User> results = users.stream().collect(toList());
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).inventoryId()).isEqualTo("inventoryId");
         context.completeNow();
     }
 

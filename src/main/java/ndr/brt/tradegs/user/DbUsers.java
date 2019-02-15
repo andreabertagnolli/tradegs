@@ -1,8 +1,8 @@
 package ndr.brt.tradegs.user;
 
-import com.mongodb.Function;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.ReplaceOptions;
 import ndr.brt.tradegs.*;
 import org.bson.Document;
 
@@ -33,8 +33,9 @@ public class DbUsers implements Users {
             events.publish(change);
         });
 
-        usersSnapshot.insertOne(Document.parse(Json.toJson(user)));
         user.clearChanges();
+
+        usersSnapshot.replaceOne(new Document("id", user.id()), Document.parse(Json.toJson(user)), new ReplaceOptions().upsert(true));
     }
 
     @Override
@@ -67,7 +68,7 @@ public class DbUsers implements Users {
                 .map(Document::toJson)
                 .map(it -> Json.fromJson(it, User.class))
                 .spliterator();
-        
+
         return StreamSupport.stream(spliterator, false);
     }
 }
