@@ -52,17 +52,6 @@ public class DbUsers implements Users {
     }
 
     @Override
-    public List<String> except(String user) {
-        Spliterator<User> spliterator = usersEvents.find()
-                .map(it -> it.get("id", String.class))
-                .map(it -> new User().created(it)).spliterator();
-
-        return StreamSupport.stream(spliterator, false)
-                .filter(it -> !user.equals(it.id()))
-                .map(User::id)
-                .collect(Collectors.toList());
-    }
-
     public Stream<User> stream() {
         Spliterator<User> spliterator = usersSnapshot.find()
                 .map(Document::toJson)

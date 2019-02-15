@@ -4,12 +4,14 @@ import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.Release;
 import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.inventory.Inventories;
+import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.Users;
 import ndr.brt.tradegs.wantlist.Wantlists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -35,7 +37,7 @@ class RealTimeMatchesTest {
     void no_match() {
         when(wantlists.get(any())).thenReturn(emptyList());
         when(inventories.get(any())).thenReturn(emptyList());
-        when(users.except("user")).thenReturn(asList("dickie", "lydia"));
+        when(users.stream()).thenReturn(Stream.of(user("user"), user("dickie"), user("lydia")));
 
         List<Match> matches = this.matches.get("user");
 
@@ -46,7 +48,7 @@ class RealTimeMatchesTest {
     void simple_match() {
         when(wantlists.get("user")).thenReturn(singletonList(new Want(2345)));
         when(inventories.get("user")).thenReturn(singletonList(new Listing(987654, new Release(12345))));
-        when(users.except("user")).thenReturn(asList("frankie", "jodie"));
+        when(users.stream()).thenReturn(Stream.of(user("user"), user("frankie"), user("jodie")));
         when(wantlists.get("frankie")).thenReturn(singletonList(new Want(12345)));
         when(wantlists.get("jodie")).thenReturn(emptyList());
         when(inventories.get("frankie")).thenReturn(singletonList(new Listing(74364, new Release(2345))));
@@ -55,5 +57,9 @@ class RealTimeMatchesTest {
         List<Match> matches = this.matches.get("user");
 
         assertThat(matches).hasSize(1);
+    }
+
+    private User user(String id) {
+        return new User().created(id);
     }
 }

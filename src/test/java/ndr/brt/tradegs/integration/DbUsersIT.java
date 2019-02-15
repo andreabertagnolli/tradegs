@@ -8,6 +8,7 @@ import ndr.brt.tradegs.Bus;
 import ndr.brt.tradegs.user.DbUsers;
 import ndr.brt.tradegs.user.User;
 import ndr.brt.tradegs.user.UserCreated;
+import ndr.brt.tradegs.user.Users;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(VertxExtension.class)
 class DbUsersIT {
 
-    private DbUsers users;
+    private Users users;
     private Bus events;
 
     @BeforeAll
