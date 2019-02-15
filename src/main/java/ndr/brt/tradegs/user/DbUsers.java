@@ -15,21 +15,21 @@ import java.util.stream.StreamSupport;
 
 public class DbUsers implements Users {
 
-    private final MongoCollection<Document> users;
+    private final MongoCollection<Document> usersEvents;
     private final MongoCollection<Document> usersSnapshot;
     private final Bus events;
 
     public DbUsers(Bus events) {
         MongoDatabase database = MongoDbConnection.mongoDatabase();
-        this.users = database.getCollection("users");
-        this.usersSnapshot = database.getCollection("usersSnapshot");
+        this.usersEvents = database.getCollection("users_events");
+        this.usersSnapshot = database.getCollection("users_snapshot");
         this.events = events;
     }
 
     @Override
     public void save(User user) {
         user.changes().forEach(change -> {
-            users.insertOne(Document.parse(Json.toJson(change)));
+            usersEvents.insertOne(Document.parse(Json.toJson(change)));
             events.publish(change);
         });
 
@@ -42,7 +42,7 @@ public class DbUsers implements Users {
     public User get(String id) {
         User user = new User();
 
-        users.find(new Document("id", id)).forEach((Consumer<Document>) it -> {
+        usersEvents.find(new Document("id", id)).forEach((Consumer<Document>) it -> {
                 Class<? extends Event> clazz = EventClasses.get(it.get("type", String.class));
                 Event event = Json.fromJson(it.toJson(), clazz);
                 user.apply(event);
@@ -53,7 +53,7 @@ public class DbUsers implements Users {
 
     @Override
     public List<String> except(String user) {
-        Spliterator<User> spliterator = users.find()
+        Spliterator<User> spliterator = usersEvents.find()
                 .map(it -> it.get("id", String.class))
                 .map(it -> new User().created(it)).spliterator();
 
