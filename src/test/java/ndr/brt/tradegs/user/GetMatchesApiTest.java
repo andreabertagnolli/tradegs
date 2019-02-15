@@ -23,12 +23,13 @@ class GetMatchesApiTest {
 
     private static final int PORT = 41431;
     private final Matches matches = mock(Matches.class);
+    private final Users users = mock(Users.class);
 
     @BeforeEach
     void setUp(Vertx vertx) {
         Router router = Router.router(vertx);
 
-        new GetMatchesApi(router, matches).run();
+        new GetMatchesApi(router, matches, users).run();
 
         vertx.createHttpServer().requestHandler(router).listen(PORT);
     }
@@ -36,7 +37,9 @@ class GetMatchesApiTest {
     @Test
     void get_matches() {
         Match match = new Match("anotherUser").get(new Listing(7655483, new Release(1234))).give(new Listing(873215436, new Release(4321)));
-        when(matches.get("anUser")).thenReturn(List.of(match));
+        User validUser = new User().created("anUser");
+        when(matches.get(validUser)).thenReturn(List.of(match));
+        when(users.get("anUser")).thenReturn(validUser);
 
         given()
             .port(PORT)
@@ -49,7 +52,19 @@ class GetMatchesApiTest {
             .body("[0].get[0].release.id", is(1234))
             .body("[0].give[0].release.id", is(4321))
         ;
+    }
 
-        verify(matches).get("anUser");
+    @Test
+    void when_user_does_not_exists_returns_400() {
+        when(users.get("unexistentUser")).thenReturn(new User());
+
+        given()
+            .port(PORT)
+        .when()
+            .get("/matches/{userId}", "unexistentUser")
+        .then()
+            .statusCode(404)
+            .body(is("User unexistentUser does not exists"))
+        ;
     }
 }

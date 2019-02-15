@@ -39,27 +39,30 @@ class RealTimeMatchesTest {
         when(inventories.get(any())).thenReturn(emptyList());
         when(users.stream()).thenReturn(Stream.of(user("user"), user("dickie"), user("lydia")));
 
-        List<Match> matches = this.matches.get("user");
+        List<Match> matches = this.matches.get(user("user"));
 
         assertThat(matches).isEmpty();
     }
 
     @Test
     void simple_match() {
-        when(wantlists.get("user")).thenReturn(singletonList(new Want(2345)));
-        when(inventories.get("user")).thenReturn(singletonList(new Listing(987654, new Release(12345))));
         when(users.stream()).thenReturn(Stream.of(user("user"), user("frankie"), user("jodie")));
-        when(wantlists.get("frankie")).thenReturn(singletonList(new Want(12345)));
-        when(wantlists.get("jodie")).thenReturn(emptyList());
-        when(inventories.get("frankie")).thenReturn(singletonList(new Listing(74364, new Release(2345))));
-        when(inventories.get("jodie")).thenReturn(singletonList(new Listing(58652543, new Release(7765))));
+        when(wantlists.get("userWantlistId")).thenReturn(singletonList(new Want(2345)));
+        when(wantlists.get("frankieWantlistId")).thenReturn(singletonList(new Want(12345)));
+        when(wantlists.get("jodieWantlistId")).thenReturn(emptyList());
+        when(inventories.get("userInventoryId")).thenReturn(singletonList(new Listing(987654, new Release(12345))));
+        when(inventories.get("frankieInventoryId")).thenReturn(singletonList(new Listing(74364, new Release(2345))));
+        when(inventories.get("jodieInventoryId")).thenReturn(singletonList(new Listing(58652543, new Release(7765))));
 
-        List<Match> matches = this.matches.get("user");
+        List<Match> matches = this.matches.get(user("user"));
 
         assertThat(matches).hasSize(1);
     }
 
     private User user(String id) {
-        return new User().created(id);
+        return new User()
+                .created(id)
+                .inventoryFetched(id + "InventoryId")
+                .wantlistFetched(id + "WantlistId");
     }
 }

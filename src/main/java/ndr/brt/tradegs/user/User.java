@@ -24,12 +24,14 @@ public class User {
         return this;
     }
 
-    public void inventoryFetched(String inventoryId) {
+    public User inventoryFetched(String inventoryId) {
         emit(new InventoryFetched(id, inventoryId));
+        return this;
     }
 
-    public void wantlistFetched(String wantlistId) {
+    public User wantlistFetched(String wantlistId) {
         emit(new WantlistFetched(id, wantlistId));
+        return this;
     }
 
     void apply(Event event) {

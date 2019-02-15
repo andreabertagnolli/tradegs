@@ -31,6 +31,7 @@ public class DbInventories implements Inventories {
                 .ifPresent(inventories::insertOne);
     }
 
+    @Override
     public List<Listing> get(String id) {
         return Optional.ofNullable(inventories.find(new Document("id", id))
                 .map(Document::toJson)

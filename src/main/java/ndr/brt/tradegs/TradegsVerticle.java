@@ -3,7 +3,6 @@ package ndr.brt.tradegs;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
 import io.vertx.ext.web.Router;
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.discogs.DiscogsClient;
@@ -41,7 +40,7 @@ public class TradegsVerticle extends AbstractVerticle {
         Bus commands = commands(vertx.eventBus());
 
         IdGenerator idGenerator = () -> UUID.randomUUID().toString();
-        DbUsers dbUsers = new DbUsers(events);
+        Users dbUsers = new DbUsers(events);
 
         commands.on(CreateUser.class, new CreateUserHandler(dbUsers));
         commands.on(FetchInventory.class, new FetchInventoryHandler(new DiscogsInventoryClient(discogs, idGenerator, inventories()), dbUsers));
@@ -52,7 +51,7 @@ public class TradegsVerticle extends AbstractVerticle {
 
         Router router = Router.router(vertx);
         new CreateUserApi(router, commands).run();
-        new GetMatchesApi(router, matches).run();
+        new GetMatchesApi(router, matches, dbUsers).run();
         vertx.createHttpServer()
                 .requestHandler(router)
                 .listen(httpServerPort, async -> {

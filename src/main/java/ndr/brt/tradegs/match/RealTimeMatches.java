@@ -24,18 +24,17 @@ public class RealTimeMatches implements Matches {
     }
 
     @Override
-    public List<Match> get(String user) {
+    public List<Match> get(User user) {
         List<Match> matches = new ArrayList<>();
-        List<Integer> myWantsIds = wantlists.get(user).stream()
+        List<Integer> myWantsIds = wantlists.get(user.wantlistId()).stream()
                 .map(Want::id)
                 .collect(toList());
-        List<Listing> myListings = inventories.get(user);
+        List<Listing> myListings = inventories.get(user.inventoryId());
         List<User> users = this.users.stream().filter(it -> !user.equals(it.id())).collect(toList());
 
         for (User other : users) {
-            // TODO: wantlist and inventories should be retrieved by their id!
-            List<Want> otherWants = wantlists.get(other.id());
-            List<Listing> otherListings = inventories.get(other.id());
+            List<Want> otherWants = wantlists.get(other.wantlistId());
+            List<Listing> otherListings = inventories.get(other.inventoryId());
 
             List<Listing> get = otherListings.stream().filter(listing -> myWantsIds.contains(listing.release().id())).collect(toList());
             List<Listing> give = myListings.stream().filter(listing -> otherWants.stream().map(Want::id).collect(toList()).contains(listing.release().id())).collect(toList());

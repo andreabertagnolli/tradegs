@@ -20,7 +20,7 @@ public class DiscogsInventoryClient implements InventoryClient {
         discogs.inventory(user).setHandler(async -> {
             if (async.succeeded()) {
                 String inventoryId = idGenerator.generate();
-                inventories.save(user, async.result());
+                inventories.save(inventoryId, async.result());
                 future.complete(inventoryId);
             } else {
                 future.fail(future.cause());

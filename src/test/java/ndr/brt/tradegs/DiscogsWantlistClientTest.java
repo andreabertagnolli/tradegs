@@ -37,7 +37,7 @@ class DiscogsWantlistClientTest {
 
         wantlist.fetch("utente").setHandler(async -> {
             assertThat(async.result(), is("idWantlist"));
-            verify(wantlists).save("utente", wants);
+            verify(wantlists).save("idWantlist", wants);
             context.completeNow();
         });
 

@@ -21,7 +21,7 @@ public class DiscogsWantlistClient implements WantlistClient {
         discogs.wantlist(user).setHandler(async -> {
             if (async.succeeded()) {
                 String inventoryId = idGenerator.generate();
-                wantlists.save(user, async.result());
+                wantlists.save(inventoryId, async.result());
                 future.complete(inventoryId);
             } else {
                 future.fail(future.cause());
