@@ -70,7 +70,7 @@ public class DiscogsClient implements Discogs {
 
         @Override
         public Future<ListingPage> apply(String userId, Integer pageNumber) {
-            log.info("Request inventory page {}", pageNumber);
+            log.info("Request {} inventory page {}", userId, pageNumber);
             String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                     .header("User-Agent", "Tradegs/0.1")
@@ -95,7 +95,7 @@ public class DiscogsClient implements Discogs {
 
         @Override
         public Future<WantlistPage> apply(String userId, Integer pageNumber) {
-            log.info("Request wantlist page {}", pageNumber);
+            log.info("Request {} wantlist page {}", userId, pageNumber);
             String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
             HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                     .header("User-Agent", "Tradegs/0.1")

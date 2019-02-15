@@ -67,7 +67,7 @@ public class TradegsVerticle extends AbstractVerticle {
 
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
-        int httpServerPort = 8080;
+        int httpServerPort = 53550;
 
         vertx.deployVerticle(new TradegsVerticle(httpServerPort, new DiscogsClient(vertx)), async -> {
             if (async.failed()) {
