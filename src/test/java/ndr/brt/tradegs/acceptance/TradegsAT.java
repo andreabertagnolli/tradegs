@@ -64,12 +64,12 @@ class TradegsAT {
         when(discogs.wantlist("darby_crash")).thenReturn(Future.succeededFuture(List.of(new Want(1234))));
 
         httpClient.post(HTTP_PORT, "localhost", "/users")
-                .handler(response -> response.bodyHandler(body -> log.info("Response: {}", body)))
-                .end(Json.toJson(new CreateUser("darby_crash")));
-
-        httpClient.post(HTTP_PORT, "localhost", "/users")
             .handler(response -> response.bodyHandler(body -> log.info("Response: {}", body)))
             .end(Json.toJson(new CreateUser("frank_navetta")));
+
+        httpClient.post(HTTP_PORT, "localhost", "/users")
+                .handler(response -> response.bodyHandler(body -> log.info("Response: {}", body)))
+                .end(Json.toJson(new CreateUser("darby_crash")));
 
         await().atMost(5, SECONDS).untilAsserted(() -> {
             httpClient.get(HTTP_PORT, "localhost", "/matches/frank_navetta")
