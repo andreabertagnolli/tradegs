@@ -31,7 +31,7 @@ public class Pages<T extends Page> {
                 log.info("Total pages: {}", totalPages);
 
                 List<Future> futures = IntStream
-                        .range(2, totalPages)
+                        .range(2, totalPages + 1)
                         .mapToObj(it -> getPage.apply(userId, it))
                         .collect(Collectors.toList());
 
