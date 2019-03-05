@@ -7,6 +7,7 @@ import ndr.brt.tradegs.discogs.pagination.GetPage;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,13 +34,13 @@ public class Pages<T extends Page> {
 
                 List<Future> futures = IntStream
                         .range(2, totalPages + 1)
-                        .mapToObj(it -> getPage.apply(userId, it))
+                        .mapToObj(page -> getPage.apply(userId, page))
                         .collect(Collectors.toList());
 
                 CompositeFuture.all(futures).setHandler(it -> {
                     if (it.succeeded()) {
                         CompositeFuture result = it.result();
-                        List pages = IntStream
+                        Collection pages = IntStream
                                 .range(0, result.size())
                                 .mapToObj(result::resultAt)
                                 .map(Page.class::cast)
