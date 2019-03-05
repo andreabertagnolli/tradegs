@@ -8,6 +8,7 @@ import ndr.brt.tradegs.discogs.api.Want;
 import ndr.brt.tradegs.discogs.api.WantlistPage;
 import ndr.brt.tradegs.discogs.pagination.GetListingPage;
 import ndr.brt.tradegs.discogs.pagination.GetWantlistPage;
+import ndr.brt.tradegs.discogs.pagination.Pages;
 
 import java.util.Collection;
 import java.util.List;
