@@ -1,4 +1,4 @@
-package ndr.brt.tradegs.discogs;
+package ndr.brt.tradegs.discogs.pagination;
 
 import io.vertx.core.Future;
 import io.vertx.core.Handler;

@@ -3,6 +3,7 @@ package ndr.brt.tradegs.discogs;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Page;
+import ndr.brt.tradegs.discogs.pagination.GetPage;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
