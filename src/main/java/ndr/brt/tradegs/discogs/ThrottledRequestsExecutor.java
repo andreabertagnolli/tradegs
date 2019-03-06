@@ -18,16 +18,20 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class ThrottledRequestsExecutor implements RequestsExecutor {
 
-    private static final int THROTTLE_DELAY = 2400;
+    private static final int DEFAULT_DELAY = 2400;
     private final Logger log = getLogger(getClass());
     private final HttpClient http;
     private BlockingQueue<RequestContext> queue;
 
     ThrottledRequestsExecutor(Vertx vertx) {
+        this(vertx, DEFAULT_DELAY);
+    }
+
+    ThrottledRequestsExecutor(Vertx vertx, int delay) {
         queue = new LinkedBlockingQueue<>();
         http = newHttpClient();
 
-        vertx.setPeriodic(THROTTLE_DELAY, time -> {
+        vertx.setPeriodic(delay, time -> {
             RequestContext context = queue.poll();
             if (context != null) {
                 log.info("Send request: {}", context.request);
