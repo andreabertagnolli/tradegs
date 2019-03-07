@@ -1,11 +1,9 @@
 package ndr.brt.tradegs.discogs.pagination;
 
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import ndr.brt.tradegs.discogs.api.Page;
 
-import java.util.function.BiFunction;
+import java.util.concurrent.CompletableFuture;
 
 public interface GetPage<T extends Page> {
-    Future<T> apply(String userId, Integer pageNumber);
+    CompletableFuture<T> apply(String userId, Integer pageNumber);
 }

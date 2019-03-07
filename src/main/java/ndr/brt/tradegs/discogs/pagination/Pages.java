@@ -1,14 +1,12 @@
 package ndr.brt.tradegs.discogs.pagination;
 
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Page;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,35 +24,22 @@ public class Pages<T extends Page> {
     public Future<List<T>> getFor(String userId) {
         Future<List<T>> future = Future.future();
 
-        getPage.apply(userId, 1).setHandler(async -> {
-            if (async.succeeded()) {
-                T first = async.result();
-                int totalPages = first.pages();
-                log.info("Total pages: {}", totalPages);
+        getPage.apply(userId, 1).thenAccept(firstPage -> {
+            int totalPages = firstPage.pages();
+            log.info("Total pages: {}", totalPages);
 
-                List<Future> futures = IntStream
-                        .range(2, totalPages + 1)
-                        .mapToObj(page -> getPage.apply(userId, page))
-                        .collect(Collectors.toList());
+            List<CompletableFuture<T>> futures = IntStream.range(2, totalPages + 1)
+                    .mapToObj(page -> getPage.apply(userId, page))
+                    .collect(Collectors.toList());
 
-                CompositeFuture.all(futures).setHandler(it -> {
-                    if (it.succeeded()) {
-                        CompositeFuture result = it.result();
-                        Collection pages = IntStream
-                                .range(0, result.size())
-                                .mapToObj(result::resultAt)
-                                .map(Page.class::cast)
-                                .collect(Collectors.toList());
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenAccept(it -> {
+                List<T> pages = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
-                        List<T> total = new ArrayList<>();
-                        total.add(first);
-                        total.addAll(pages);
-                        future.complete(total);
-                    } else {
-                        future.fail(it.cause());
-                    }
-                });
-            }
+                List<T> total = new ArrayList<>();
+                total.add(firstPage);
+                total.addAll(pages);
+                future.complete(total);
+            });
         });
 
         return future;
