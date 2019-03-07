@@ -30,15 +30,16 @@ public class GetWantlistPage implements GetPage<WantlistPage> {
                 .GET().build();
 
         Future<WantlistPage> future = Future.future();
-        executor.execute(request).setHandler(async -> {
-            if (async.succeeded()) {
-                String json = async.result().body();
+        executor.execute(request)
+            .thenAccept(response -> {
+                String json = response.body();
                 WantlistPage page = Json.fromJson(json, WantlistPage.class);
                 future.complete(page);
-            } else {
-                future.fail(async.cause());
-            }
-        });
+            })
+            .exceptionally(throwable -> {
+                future.fail(throwable);
+                return null;
+            });
         return future;
     }
 }

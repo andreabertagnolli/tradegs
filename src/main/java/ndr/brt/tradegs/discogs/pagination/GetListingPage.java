@@ -31,14 +31,13 @@ public class GetListingPage implements GetPage<ListingPage> {
                 .GET().build();
 
         Future<ListingPage> future = Future.future();
-        executor.execute(request).setHandler(async -> {
-            if (async.succeeded()) {
-                String json = async.result().body();
-                ListingPage page = Json.fromJson(json, ListingPage.class);
-                future.complete(page);
-            } else {
-                future.fail(async.cause());
-            }
+        executor.execute(request).thenAccept(response -> {
+            String json = response.body();
+            ListingPage page = Json.fromJson(json, ListingPage.class);
+            future.complete(page);
+        }).exceptionally(throwable -> {
+            future.fail(throwable);
+            return null;
         });
 
         return future;
