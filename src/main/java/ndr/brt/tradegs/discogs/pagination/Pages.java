@@ -3,11 +3,11 @@ package ndr.brt.tradegs.discogs.pagination;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Page;
-import ndr.brt.tradegs.discogs.pagination.GetPage;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,4 +59,5 @@ public class Pages<T extends Page> {
 
         return future;
     }
+
 }

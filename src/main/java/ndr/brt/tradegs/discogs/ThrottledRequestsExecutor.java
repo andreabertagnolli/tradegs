@@ -36,7 +36,7 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
             if (context != null) {
                 log.info("Send request: {}", context.request);
                 http.sendAsync(context.request, HttpResponse.BodyHandlers.ofString())
-                        .thenAccept(context.future::complete);
+                        .thenAcceptAsync(context.future::complete);
             }
         });
     }
