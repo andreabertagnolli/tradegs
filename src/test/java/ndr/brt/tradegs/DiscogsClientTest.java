@@ -1,19 +1,14 @@
 package ndr.brt.tradegs;
 
-import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import ndr.brt.tradegs.discogs.DiscogsClient;
-import ndr.brt.tradegs.discogs.api.Listing;
-import ndr.brt.tradegs.discogs.api.Want;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +30,7 @@ class FetchWantlistHandlerTest {
 
     @Test
     void fetch_inventory() {
-        when(wantlistClient.fetch("user")).thenReturn(Future.succeededFuture("wantlistId"));
+        when(wantlistClient.fetch("user")).thenReturn(CompletableFuture.completedFuture("wantlistId"));
         when(users.get("user")).thenReturn(new User().created("user"));
 
         handler.consume(new FetchWantlist("user"));

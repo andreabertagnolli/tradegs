@@ -1,7 +1,7 @@
 package ndr.brt.tradegs.inventory;
 
-import io.vertx.core.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface InventoryClient {
-    Future<String> fetch(String user);
+    CompletableFuture<String> fetch(String user);
 }

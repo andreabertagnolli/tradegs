@@ -1,8 +1,9 @@
 package ndr.brt.tradegs.wantlist;
 
-import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.Discogs;
 import ndr.brt.tradegs.inventory.IdGenerator;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DiscogsWantlistClient implements WantlistClient {
     private final Discogs discogs;
@@ -16,18 +17,11 @@ public class DiscogsWantlistClient implements WantlistClient {
     }
 
     @Override
-    public Future<String> fetch(String user) {
-        Future<String> future = Future.future();
-
-        discogs.wantlist(user).thenAccept(wants -> {
+    public CompletableFuture<String> fetch(String user) {
+        return discogs.wantlist(user).thenApply(wants -> {
             String inventoryId = idGenerator.generate();
             wantlists.save(inventoryId, wants);
-            future.complete(inventoryId);
-        }).exceptionally(throwable -> {
-            future.fail(future.cause());
-            return null;
+            return inventoryId;
         });
-
-        return future;
     }
 }

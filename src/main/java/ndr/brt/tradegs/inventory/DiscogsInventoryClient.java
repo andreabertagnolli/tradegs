@@ -1,7 +1,8 @@
 package ndr.brt.tradegs.inventory;
 
-import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.Discogs;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DiscogsInventoryClient implements InventoryClient {
     private final Discogs discogs;
@@ -15,18 +16,11 @@ public class DiscogsInventoryClient implements InventoryClient {
     }
 
     @Override
-    public Future<String> fetch(String user) {
-        Future<String> future = Future.future();
-
-        discogs.inventory(user).thenAccept(listings -> {
+    public CompletableFuture<String> fetch(String user) {
+        return discogs.inventory(user).thenApply(listings -> {
             String inventoryId = idGenerator.generate();
             inventories.save(inventoryId, listings);
-            future.complete(inventoryId);
-        }).exceptionally(throwable -> {
-            future.fail(future.cause());
-            return null;
+            return inventoryId;
         });
-
-        return future;
     }
 }

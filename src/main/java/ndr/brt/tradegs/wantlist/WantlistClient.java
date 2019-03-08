@@ -1,7 +1,7 @@
 package ndr.brt.tradegs.wantlist;
 
-import io.vertx.core.Future;
+import java.util.concurrent.CompletableFuture;
 
 public interface WantlistClient {
-    Future<String> fetch(String user);
+    CompletableFuture<String> fetch(String user);
 }

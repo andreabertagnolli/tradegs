@@ -37,8 +37,8 @@ class DiscogsInventoryClientTest {
 
         DiscogsInventoryClient inventory = new DiscogsInventoryClient(discogs, idGenerator, inventories);
 
-        inventory.fetch("utente").setHandler(async -> {
-            assertThat(async.result(), is("idInventory"));
+        inventory.fetch("utente").thenAccept(inventoryId -> {
+            assertThat(inventoryId, is("idInventory"));
             verify(inventories).save("idInventory", listings);
             context.completeNow();
         });

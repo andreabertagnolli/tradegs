@@ -14,14 +14,10 @@ public class FetchInventoryHandler implements Listener<FetchInventory> {
 
     @Override
     public void consume(FetchInventory command) {
-        inventoryClient.fetch(command.userId()).setHandler(async -> {
-            if (async.succeeded()) {
-                User user = users.get(command.userId());
-                user.inventoryFetched(async.result());
-                users.save(user);
-            } else {
-                // TODO: command fails... what should we do now?
-            }
+        inventoryClient.fetch(command.userId()).thenAccept(inventoryId -> {
+            User user = users.get(command.userId());
+            user.inventoryFetched(inventoryId);
+            users.save(user);
         });
     }
 }

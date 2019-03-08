@@ -36,8 +36,8 @@ class DiscogsWantlistClientTest {
 
         DiscogsWantlistClient wantlist = new DiscogsWantlistClient(discogs, idGenerator, wantlists);
 
-        wantlist.fetch("utente").setHandler(async -> {
-            assertThat(async.result(), is("idWantlist"));
+        wantlist.fetch("utente").thenAccept(wantlistId -> {
+            assertThat(wantlistId, is("idWantlist"));
             verify(wantlists).save("idWantlist", wants);
             context.completeNow();
         });

@@ -15,14 +15,10 @@ public class FetchWantlistHandler implements Listener<FetchWantlist> {
 
     @Override
     public void consume(FetchWantlist command) {
-        wantlistClient.fetch(command.userId()).setHandler(async -> {
-            if (async.succeeded()) {
-                User user = users.get(command.userId());
-                user.wantlistFetched(async.result());
-                users.save(user);
-            } else {
-                // TODO: No wantlist, so command should fail? notify error?
-            }
+        wantlistClient.fetch(command.userId()).thenAccept(wantlistId -> {
+            User user = users.get(command.userId());
+            user.wantlistFetched(wantlistId);
+            users.save(user);
         });
     }
 }
