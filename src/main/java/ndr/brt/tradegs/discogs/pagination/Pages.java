@@ -1,6 +1,5 @@
 package ndr.brt.tradegs.discogs.pagination;
 
-import io.vertx.core.Future;
 import ndr.brt.tradegs.discogs.api.Page;
 import org.slf4j.Logger;
 
@@ -21,8 +20,8 @@ public class Pages<T extends Page> {
         this.getPage = getPage;
     }
 
-    public Future<List<T>> getFor(String userId) {
-        Future<List<T>> future = Future.future();
+    public CompletableFuture<List<T>> getFor(String userId) {
+        CompletableFuture<List<T>> future = new CompletableFuture<>();
 
         getPage.apply(userId, 1).thenAccept(firstPage -> {
             int totalPages = firstPage.pages();

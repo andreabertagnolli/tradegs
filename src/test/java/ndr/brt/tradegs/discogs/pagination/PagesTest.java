@@ -27,8 +27,8 @@ class PagesTest {
         when(getPage.apply("anyUser", 3)).thenReturn(CompletableFuture.completedFuture(pageThree));
         Pages<DummyPage> pages = new Pages<>(getPage);
 
-        pages.getFor("anyUser").setHandler(async -> {
-            assertThat(async.result()).containsOnly(pageOne, pageTwo, pageThree);
+        pages.getFor("anyUser").thenAccept(result -> {
+            assertThat(result).containsOnly(pageOne, pageTwo, pageThree);
             context.completeNow();
         });
     }

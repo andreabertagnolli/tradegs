@@ -29,16 +29,14 @@ public class DiscogsClient implements Discogs {
     public Future<List<Listing>> inventory(String user) {
         Future<List<Listing>> future = Future.future();
 
-        listingPages.getFor(user).setHandler(async -> {
-           if (async.succeeded()) {
-               future.complete(async.result().stream()
-                       .map(ListingPage::listings)
-                       .flatMap(Collection::stream)
-                       .collect(Collectors.toList()));
-           } else {
-               future.fail(async.cause());
-           }
-        });
+        listingPages.getFor(user)
+            .thenAccept(pages -> {
+                future.complete(pages.stream().map(ListingPage::listings).flatMap(Collection::stream).collect(Collectors.toList()));
+            })
+            .exceptionally(throwable -> {
+                future.fail(throwable);
+                return null;
+            });
 
         return future;
     }
@@ -47,16 +45,14 @@ public class DiscogsClient implements Discogs {
     public Future<List<Want>> wantlist(String user) {
         Future<List<Want>> future = Future.future();
 
-        wantlistPages.getFor(user).setHandler(async -> {
-            if (async.succeeded()) {
-                future.complete(async.result().stream()
-                        .map(WantlistPage::wants)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList()));
-            } else {
-                future.fail(async.cause());
-            }
-        });
+        wantlistPages.getFor(user)
+            .thenAccept(pages -> {
+                future.complete(pages.stream().map(WantlistPage::wants).flatMap(Collection::stream).collect(Collectors.toList()));
+            })
+            .exceptionally(throwable -> {
+                future.fail(throwable);
+                return null;
+            });
 
         return future;
     }
