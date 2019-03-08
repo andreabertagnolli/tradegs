@@ -1,6 +1,5 @@
 package ndr.brt.tradegs.discogs;
 
-import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import ndr.brt.tradegs.discogs.api.Listing;
 import ndr.brt.tradegs.discogs.api.ListingPage;
@@ -12,7 +11,9 @@ import ndr.brt.tradegs.discogs.pagination.Pages;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
+
+import static java.util.stream.Collectors.toList;
 
 public class DiscogsClient implements Discogs {
 
@@ -26,35 +27,15 @@ public class DiscogsClient implements Discogs {
     }
 
     @Override
-    public Future<List<Listing>> inventory(String user) {
-        Future<List<Listing>> future = Future.future();
-
-        listingPages.getFor(user)
-            .thenAccept(pages -> {
-                future.complete(pages.stream().map(ListingPage::listings).flatMap(Collection::stream).collect(Collectors.toList()));
-            })
-            .exceptionally(throwable -> {
-                future.fail(throwable);
-                return null;
-            });
-
-        return future;
+    public CompletableFuture<List<Listing>> inventory(String user) {
+        return listingPages.getFor(user)
+            .thenApply(it -> it.stream().map(ListingPage::listings).flatMap(Collection::stream).collect(toList()));
     }
 
     @Override
-    public Future<List<Want>> wantlist(String user) {
-        Future<List<Want>> future = Future.future();
-
-        wantlistPages.getFor(user)
-            .thenAccept(pages -> {
-                future.complete(pages.stream().map(WantlistPage::wants).flatMap(Collection::stream).collect(Collectors.toList()));
-            })
-            .exceptionally(throwable -> {
-                future.fail(throwable);
-                return null;
-            });
-
-        return future;
+    public CompletableFuture<List<Want>> wantlist(String user) {
+        return wantlistPages.getFor(user)
+            .thenApply(pages -> pages.stream().map(WantlistPage::wants).flatMap(Collection::stream).collect(toList()));
     }
 
 }

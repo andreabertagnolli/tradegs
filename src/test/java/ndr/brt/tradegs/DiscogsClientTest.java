@@ -31,10 +31,8 @@ class DiscogsClientTest {
     @Test
     @Timeout(20000)
     void check_inventory_and_handle_pagination(VertxTestContext context) {
-        Future<List<Listing>> listings = client.inventory("smellymilk");
-
-        listings.setHandler(async -> {
-            assertThat(async.result().size()).isGreaterThan(50);
+        client.inventory("smellymilk").thenAccept(listings -> {
+            assertThat(listings.size()).isGreaterThan(50);
             context.completeNow();
         });
     }
@@ -43,10 +41,8 @@ class DiscogsClientTest {
     @Test
     @Timeout(20000)
     void check_wantlist_and_handle_pagination(VertxTestContext context) {
-        Future<List<Want>> listings = client.wantlist("smellymilk");
-
-        listings.setHandler(async -> {
-            assertThat(async.result().size()).isGreaterThan(50);
+        client.wantlist("smellymilk").thenAccept(wants -> {
+            assertThat(wants.size()).isGreaterThan(50);
             context.completeNow();
         });
     }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -30,7 +31,7 @@ class DiscogsWantlistClientTest {
         List<Want> wants = asList(
                 new Want(12), new Want(13)
         );
-        when(discogs.wantlist("utente")).thenReturn(Future.succeededFuture(wants));
+        when(discogs.wantlist("utente")).thenReturn(CompletableFuture.completedFuture(wants));
         when(idGenerator.generate()).thenReturn("idWantlist");
 
         DiscogsWantlistClient wantlist = new DiscogsWantlistClient(discogs, idGenerator, wantlists);

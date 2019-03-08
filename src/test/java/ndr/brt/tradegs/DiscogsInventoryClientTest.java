@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,7 +32,7 @@ class DiscogsInventoryClientTest {
         List<Listing> listings = asList(
                 new Listing(12, new Release(4321)), new Listing(13, new Release(6432))
         );
-        when(discogs.inventory("utente")).thenReturn(Future.succeededFuture(listings));
+        when(discogs.inventory("utente")).thenReturn(CompletableFuture.completedFuture(listings));
         when(idGenerator.generate()).thenReturn("idInventory");
 
         DiscogsInventoryClient inventory = new DiscogsInventoryClient(discogs, idGenerator, inventories);

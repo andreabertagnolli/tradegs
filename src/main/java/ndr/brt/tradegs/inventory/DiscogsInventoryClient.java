@@ -17,14 +17,14 @@ public class DiscogsInventoryClient implements InventoryClient {
     @Override
     public Future<String> fetch(String user) {
         Future<String> future = Future.future();
-        discogs.inventory(user).setHandler(async -> {
-            if (async.succeeded()) {
-                String inventoryId = idGenerator.generate();
-                inventories.save(inventoryId, async.result());
-                future.complete(inventoryId);
-            } else {
-                future.fail(future.cause());
-            }
+
+        discogs.inventory(user).thenAccept(listings -> {
+            String inventoryId = idGenerator.generate();
+            inventories.save(inventoryId, listings);
+            future.complete(inventoryId);
+        }).exceptionally(throwable -> {
+            future.fail(future.cause());
+            return null;
         });
 
         return future;

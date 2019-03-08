@@ -18,14 +18,14 @@ public class DiscogsWantlistClient implements WantlistClient {
     @Override
     public Future<String> fetch(String user) {
         Future<String> future = Future.future();
-        discogs.wantlist(user).setHandler(async -> {
-            if (async.succeeded()) {
-                String inventoryId = idGenerator.generate();
-                wantlists.save(inventoryId, async.result());
-                future.complete(inventoryId);
-            } else {
-                future.fail(future.cause());
-            }
+
+        discogs.wantlist(user).thenAccept(wants -> {
+            String inventoryId = idGenerator.generate();
+            wantlists.save(inventoryId, wants);
+            future.complete(inventoryId);
+        }).exceptionally(throwable -> {
+            future.fail(future.cause());
+            return null;
         });
 
         return future;
