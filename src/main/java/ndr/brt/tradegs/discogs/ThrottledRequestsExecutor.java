@@ -1,10 +1,12 @@
 package ndr.brt.tradegs.discogs;
 
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -12,6 +14,7 @@ import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -26,6 +29,8 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
     private final Logger log = getLogger(getClass());
     private final HttpClient http;
     private BlockingQueue<RequestContext> queue;
+    private AtomicLong timer = new AtomicLong(0);
+    private Handler<Long> executor;
 
     ThrottledRequestsExecutor(Vertx vertx) {
         this(vertx, DEFAULT_DELAY);
@@ -35,17 +40,16 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
         queue = new LinkedBlockingQueue<>();
         http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
-        vertx.setPeriodic(delay, time -> {
+        executor = timerId -> {
+            timer.set(timerId);
             RequestContext context = queue.poll();
             if (context != null) {
                 log.info("Send request: {}", context.request);
-                http.sendAsync(context.request, ofString())
-                    .thenAccept(it -> {
-                        log.info("AAAAAAAAAAAAAAAAAAA Received response {} to request {}. Headers: {}", it.statusCode(), context.request, it.headers());
-                        context.future.complete(it);
-                    });
+                http.sendAsync(context.request, ofString()).thenAccept(context.future::complete);
             }
-        });
+        };
+
+        vertx.setPeriodic(delay, executor);
     }
 
     @Override
