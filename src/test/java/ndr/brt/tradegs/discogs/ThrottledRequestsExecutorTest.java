@@ -26,10 +26,10 @@ class ThrottledRequestsExecutorTest {
 
     @BeforeEach
     void setUp(Vertx vertx) {
-        executor = new ThrottledRequestsExecutor(vertx, 20);
+        executor = new ThrottledRequestsExecutor(vertx);
 
         Router router = Router.router(vertx);
-        router.get("/any").handler(it -> it.response().end("ok!"));
+        router.get("/any").handler(it -> it.response().putHeader("X-Discogs-Ratelimit", "500").end("ok!"));
         vertx.createHttpServer()
                 .requestHandler(router)
                 .listen(1234);
