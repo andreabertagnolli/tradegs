@@ -3,6 +3,8 @@ package ndr.brt.tradegs.discogs;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.HttpMethod;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -27,29 +29,24 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
 
     private static final int DEFAULT_DELAY = 2500;
     private final Logger log = getLogger(getClass());
-    private final HttpClient http;
-    private BlockingQueue<RequestContext> queue;
-    private AtomicLong timer = new AtomicLong(0);
-    private Handler<Long> executor;
+    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+    private final BlockingQueue<RequestContext> queue = new LinkedBlockingQueue<>();
+    private final AtomicLong timer = new AtomicLong(0);
+    private final Handler<Long> executor = timerId -> {
+        RequestContext context = queue.poll();
+        if (context != null) {
+            log.info("Send request: {}", context.request);
+            http.sendAsync(context.request, ofString())
+                    .thenAccept(context.future::complete);
+        }
+    };
 
     ThrottledRequestsExecutor(Vertx vertx) {
         this(vertx, DEFAULT_DELAY);
     }
 
     ThrottledRequestsExecutor(Vertx vertx, int delay) {
-        queue = new LinkedBlockingQueue<>();
-        http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-
-        executor = timerId -> {
-            timer.set(timerId);
-            RequestContext context = queue.poll();
-            if (context != null) {
-                log.info("Send request: {}", context.request);
-                http.sendAsync(context.request, ofString()).thenAccept(context.future::complete);
-            }
-        };
-
-        vertx.setPeriodic(delay, executor);
+        timer.set(vertx.setPeriodic(delay, executor));
     }
 
     @Override
