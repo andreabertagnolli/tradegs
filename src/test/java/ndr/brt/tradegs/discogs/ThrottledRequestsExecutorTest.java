@@ -3,7 +3,6 @@ package ndr.brt.tradegs.discogs;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
@@ -14,12 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ExtendWith(VertxExtension.class)
@@ -65,7 +62,5 @@ class ThrottledRequestsExecutorTest {
         });
 
     }
-
-
 
 }

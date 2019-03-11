@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.time.Duration;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -28,6 +29,7 @@ public class GetListingPage implements GetPage<ListingPage> {
         String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
                 .header("User-Agent", "Tradegs/0.1")
+                .timeout(Duration.ofSeconds(15))
                 .GET().build();
 
         Future<ListingPage> future = Future.future();
