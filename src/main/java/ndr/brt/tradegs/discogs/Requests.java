@@ -6,7 +6,7 @@ import io.vertx.core.Handler;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public interface RequestsExecutor {
+public interface Requests {
 
     Future<HttpResponse<String>> execute(HttpRequest request);
 }

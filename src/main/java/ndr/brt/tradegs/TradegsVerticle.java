@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 
 import java.util.UUID;
 
-import static ndr.brt.tradegs.Bus.events;
 import static ndr.brt.tradegs.Bus.commands;
+import static ndr.brt.tradegs.Bus.events;
 import static ndr.brt.tradegs.inventory.Inventories.inventories;
 import static ndr.brt.tradegs.wantlist.Wantlists.wantlists;
 import static org.slf4j.LoggerFactory.getLogger;

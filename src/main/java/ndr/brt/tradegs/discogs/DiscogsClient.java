@@ -20,7 +20,7 @@ public class DiscogsClient implements Discogs {
     private final Pages<WantlistPage> wantlistPages;
 
     public DiscogsClient(Vertx vertx) {
-        RequestsExecutor executor = new ThrottledRequestsExecutor(vertx);
+        Requests executor = new ThrottledRequests(vertx);
         listingPages = new Pages<>(new GetListingPage(executor));
         wantlistPages = new Pages<>(new GetWantlistPage(executor));
     }

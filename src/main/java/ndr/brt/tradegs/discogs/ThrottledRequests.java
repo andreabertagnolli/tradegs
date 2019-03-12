@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ThrottledRequestsExecutor implements RequestsExecutor {
+public class ThrottledRequests implements Requests {
 
     private final Logger log = getLogger(getClass());
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
@@ -26,7 +26,7 @@ public class ThrottledRequestsExecutor implements RequestsExecutor {
 
     private Vertx vertx;
 
-    ThrottledRequestsExecutor(Vertx vertx) {
+    ThrottledRequests(Vertx vertx) {
         this.vertx = vertx;
         executorId.set(vertx.setPeriodic(actualDelay.get(), executor()));
     }

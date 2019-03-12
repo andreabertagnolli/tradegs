@@ -2,9 +2,7 @@ package ndr.brt.tradegs.discogs.pagination;
 
 import io.vertx.core.Future;
 import ndr.brt.tradegs.Json;
-import ndr.brt.tradegs.discogs.DiscogsClient;
-import ndr.brt.tradegs.discogs.RequestsExecutor;
-import ndr.brt.tradegs.discogs.ThrottledRequestsExecutor;
+import ndr.brt.tradegs.discogs.Requests;
 import ndr.brt.tradegs.discogs.api.ListingPage;
 import org.slf4j.Logger;
 
@@ -17,9 +15,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class GetListingPage implements GetPage<ListingPage> {
 
     private final Logger log = getLogger(getClass());
-    private RequestsExecutor executor;
+    private Requests executor;
 
-    public GetListingPage(RequestsExecutor executor) {
+    public GetListingPage(Requests executor) {
         this.executor = executor;
     }
 

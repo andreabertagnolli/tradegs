@@ -20,13 +20,13 @@ import java.util.stream.IntStream;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ExtendWith(VertxExtension.class)
-class ThrottledRequestsExecutorTest {
+class ThrottledRequestsTest {
 
-    private ThrottledRequestsExecutor executor;
+    private ThrottledRequests executor;
 
     @BeforeEach
     void setUp(Vertx vertx) {
-        executor = new ThrottledRequestsExecutor(vertx);
+        executor = new ThrottledRequests(vertx);
 
         Router router = Router.router(vertx);
         router.get("/any").handler(it -> it.response().putHeader("X-Discogs-Ratelimit", "500").end("ok!"));
