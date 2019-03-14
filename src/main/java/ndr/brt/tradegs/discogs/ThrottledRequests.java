@@ -3,12 +3,16 @@ package ndr.brt.tradegs.discogs;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
 import org.slf4j.Logger;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,23 +24,24 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ThrottledRequests implements Requests {
 
     private final Logger log = getLogger(getClass());
-    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
     private final BlockingQueue<RequestContext> queue = new LinkedBlockingQueue<>();
     private final AtomicLong executorId = new AtomicLong(0);
     private final AtomicLong actualDelay = new AtomicLong(100);
+    private final io.vertx.core.http.HttpClient httpClient;
 
     private Vertx vertx;
 
     ThrottledRequests(Vertx vertx) {
         this.vertx = vertx;
+        this.httpClient = vertx.createHttpClient();
         long id = vertx.setPeriodic(actualDelay.get(), executor());
         this.executorId.set(id);
     }
 
     @Override
-    public Future<HttpResponse<String>> execute(HttpRequest request) {
+    public Future<Buffer> execute(Request request) {
         try {
-            Future<HttpResponse<String>> future = Future.future();
+            Future<Buffer> future = Future.future();
             queue.put(new RequestContext(request, future));
             return future;
         } catch (Exception e) {
@@ -49,36 +54,38 @@ public class ThrottledRequests implements Requests {
         return timerId -> {
             RequestContext context = queue.poll();
             if (context != null) {
-                log.info("Send request: {}", context.request);
-                http.sendAsync(context.request, ofString())
-                    .thenApply(checkAndUpdateRateLimit())
-                    .thenAccept(context.future::complete);
+                Request inputRequest = context.request;
+                HttpClientRequest request = httpClient.request(inputRequest.method(), inputRequest.port(), inputRequest.host(), inputRequest.url());
+                inputRequest.headers().forEach(entry -> request.putHeader(entry.getKey(), entry.getValue()));
+                request.handler(response -> {
+                    response.bodyHandler(context.future::complete);
+                    checkAndUpdateRateLimit(response);
+                }).end();
+
+                log.info("Send request: {}", inputRequest);
             }
         };
     }
 
-    private UnaryOperator<HttpResponse<String>> checkAndUpdateRateLimit() {
-        return response -> {
-            response.headers().firstValue("X-Discogs-Ratelimit")
-                .map(Long::parseLong)
-                .map(rateLimit -> rateLimit - 1)
-                .map(requestsPerMinute -> 60000 / requestsPerMinute)
-                .ifPresent(throttleDelay -> {
-                    if (throttleDelay != actualDelay.getAndSet(throttleDelay)) {
-                        vertx.cancelTimer(executorId.get());
-                        long id = vertx.setPeriodic(throttleDelay, executor());
-                        executorId.set(id);
-                    }
-                });
-            return response;
-        };
+    private void checkAndUpdateRateLimit(HttpClientResponse response) {
+        Optional.ofNullable(response.getHeader("X-Discogs-Ratelimit"))
+            .map(Long::parseLong)
+            .map(rateLimit -> rateLimit - 1)
+            .map(requestsPerMinute -> 60000 / requestsPerMinute)
+            .ifPresent(throttleDelay -> {
+                if (throttleDelay != actualDelay.getAndSet(throttleDelay)) {
+                    vertx.cancelTimer(executorId.get());
+                    long id = vertx.setPeriodic(throttleDelay, executor());
+                    executorId.set(id);
+                }
+            });
     }
 
     private static class RequestContext {
-        private final HttpRequest request;
-        private final Future<HttpResponse<String>> future;
+        private final Request request;
+        private final Future<Buffer> future;
 
-        private RequestContext(HttpRequest request, Future<HttpResponse<String>> future) {
+        private RequestContext(Request request, Future<Buffer> future) {
             this.request = request;
             this.future = future;
         }

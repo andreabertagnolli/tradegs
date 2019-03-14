@@ -2,6 +2,7 @@ package ndr.brt.tradegs.discogs.pagination;
 
 import io.vertx.core.Future;
 import ndr.brt.tradegs.Json;
+import ndr.brt.tradegs.discogs.Request;
 import ndr.brt.tradegs.discogs.Requests;
 import ndr.brt.tradegs.discogs.api.WantlistPage;
 import org.slf4j.Logger;
@@ -25,15 +26,12 @@ public class GetWantlistPage implements GetPage<WantlistPage> {
     public Future<WantlistPage> apply(String userId, Integer pageNumber) {
         log.info("Request {} wantlist page {}", userId, pageNumber);
         String url = String.format("https://api.discogs.com/users/%s/wants?page=%d", userId, pageNumber);
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("User-Agent", "Tradegs/0.1")
-                .timeout(Duration.ofSeconds(15))
-                .GET().build();
+        Request request = Request.get(url).header("User-Agent", "Tradegs/0.1");
 
         Future<WantlistPage> future = Future.future();
         executor.execute(request).setHandler(async -> {
             if (async.succeeded()) {
-                String json = async.result().body();
+                String json = async.result().toString();
                 WantlistPage page = Json.fromJson(json, WantlistPage.class);
                 future.complete(page);
             } else {
