@@ -1,13 +1,14 @@
 package ndr.brt.tradegs.discogs.pagination;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import ndr.brt.tradegs.discogs.api.Page;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,12 +25,12 @@ public class Pages<T extends Page> {
     }
 
     public Future<List<T>> getFor(String userId) {
-        Future<List<T>> future = Future.future();
+        Future<List<T>> result = Future.future();
 
         getPage.apply(userId, 1).setHandler(async -> {
             if (async.succeeded()) {
-                T first = async.result();
-                int totalPages = first.pages();
+                T firstPage = async.result();
+                int totalPages = firstPage.pages();
                 log.info("Total pages: {}", totalPages);
 
                 List<Future> futures = IntStream
@@ -37,27 +38,32 @@ public class Pages<T extends Page> {
                         .mapToObj(page -> getPage.apply(userId, page))
                         .collect(Collectors.toList());
 
-                CompositeFuture.all(futures).setHandler(it -> {
-                    if (it.succeeded()) {
-                        CompositeFuture result = it.result();
-                        Collection pages = IntStream
-                                .range(0, result.size())
-                                .mapToObj(result::resultAt)
-                                .map(Page.class::cast)
-                                .collect(Collectors.toList());
-
-                        List<T> total = new ArrayList<>();
-                        total.add(first);
-                        total.addAll(pages);
-                        future.complete(total);
-                    } else {
-                        future.fail(it.cause());
-                    }
-                });
+                CompositeFuture.all(futures).setHandler(joinPages(result, firstPage));
             }
         });
 
-        return future;
+        return result;
+    }
+
+    private Handler<AsyncResult<CompositeFuture>> joinPages(Future<List<T>> future, T firstPage) {
+        return async -> {
+            if (async.succeeded()) {
+                CompositeFuture remnants = async.result();
+                Collection remnantPages = IntStream
+                        .range(0, remnants.size())
+                        .mapToObj(remnants::resultAt)
+                        .map(Page.class::cast)
+                        .collect(Collectors.toList());
+
+                List<T> total = new ArrayList<>();
+                total.add(firstPage);
+                total.addAll(remnantPages);
+
+                future.complete(total);
+            } else {
+                future.fail(async.cause());
+            }
+        };
     }
 
 }

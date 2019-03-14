@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.UnaryOperator;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -28,7 +29,8 @@ public class ThrottledRequests implements Requests {
 
     ThrottledRequests(Vertx vertx) {
         this.vertx = vertx;
-        executorId.set(vertx.setPeriodic(actualDelay.get(), executor()));
+        long id = vertx.setPeriodic(actualDelay.get(), executor());
+        this.executorId.set(id);
     }
 
     @Override
@@ -49,21 +51,26 @@ public class ThrottledRequests implements Requests {
             if (context != null) {
                 log.info("Send request: {}", context.request);
                 http.sendAsync(context.request, ofString())
-                    .thenApply(response -> {
-                        response.headers().firstValue("X-Discogs-Ratelimit")
-                            .map(Long::parseLong)
-                            .map(rateLimit -> rateLimit - 1)
-                            .map(requestsPerMinute -> 60000 / requestsPerMinute)
-                            .ifPresent(throttleDelay -> {
-                                if (throttleDelay != actualDelay.getAndSet(throttleDelay)) {
-                                    vertx.cancelTimer(executorId.get());
-                                    executorId.set(vertx.setPeriodic(actualDelay.get(), executor()));
-                                }
-                            });
-                        return response;
-                    })
+                    .thenApply(checkAndUpdateRateLimit())
                     .thenAccept(context.future::complete);
             }
+        };
+    }
+
+    private UnaryOperator<HttpResponse<String>> checkAndUpdateRateLimit() {
+        return response -> {
+            response.headers().firstValue("X-Discogs-Ratelimit")
+                .map(Long::parseLong)
+                .map(rateLimit -> rateLimit - 1)
+                .map(requestsPerMinute -> 60000 / requestsPerMinute)
+                .ifPresent(throttleDelay -> {
+                    if (throttleDelay != actualDelay.getAndSet(throttleDelay)) {
+                        vertx.cancelTimer(executorId.get());
+                        long id = vertx.setPeriodic(throttleDelay, executor());
+                        executorId.set(id);
+                    }
+                });
+            return response;
         };
     }
 
