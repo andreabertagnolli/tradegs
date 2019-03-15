@@ -2,6 +2,7 @@ package ndr.brt.tradegs.discogs;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.RequestOptions;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Request {
     private final HttpMethod method;
@@ -29,5 +30,10 @@ public class Request {
 
     public RequestOptions options() {
         return options;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
