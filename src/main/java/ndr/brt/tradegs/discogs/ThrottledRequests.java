@@ -55,12 +55,13 @@ public class ThrottledRequests implements Requests {
             RequestContext context = queue.poll();
             if (context != null) {
                 Request inputRequest = context.request;
-                HttpClientRequest request = httpClient.request(inputRequest.method(), inputRequest.port(), inputRequest.host(), inputRequest.url());
-                inputRequest.headers().forEach(entry -> request.putHeader(entry.getKey(), entry.getValue()));
-                request.handler(response -> {
-                    response.bodyHandler(context.future::complete);
-                    checkAndUpdateRateLimit(response);
-                }).end();
+                httpClient.request(inputRequest.method(), inputRequest.options())
+                    .putHeader("User-Agent", "Tradegs/0.1")
+                    .handler(response -> {
+                        response.bodyHandler(context.future::complete);
+                        checkAndUpdateRateLimit(response);
+                    })
+                    .end();
 
                 log.info("Send request: {}", inputRequest);
             }

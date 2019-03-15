@@ -4,6 +4,7 @@ import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.RequestOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.junit5.Timeout;
 import io.vertx.junit5.VertxExtension;
@@ -37,29 +38,13 @@ class ThrottledRequestsTest {
     @Test
     @Timeout(value = 1, timeUnit = SECONDS)
     void handle_throttled_request(VertxTestContext context) {
-        Request request = new Request(HttpMethod.GET, "/any", 1234, "localhost");
+        Request request = Request.get(new RequestOptions().setPort(1234).setURI("/any"));
 
         executor.execute(request).setHandler(async -> {
             if (async.succeeded()) {
                 context.completeNow();
             }
         });
-    }
-
-    @Test
-    @Timeout(value = 20, timeUnit = SECONDS)
-    void handle_many_requests(VertxTestContext context) {
-        List<Future> futures = IntStream.range(0, 100)
-                .mapToObj(it -> new Request(HttpMethod.GET, "/any", 1234, "localhost"))
-                .map(it -> executor.execute(it))
-                .collect(Collectors.toList());
-
-        CompositeFuture.all(futures).setHandler(async -> {
-            if (async.succeeded()) {
-                context.completeNow();
-            }
-        });
-
     }
 
 }

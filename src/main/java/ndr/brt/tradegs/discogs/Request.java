@@ -1,55 +1,26 @@
 package ndr.brt.tradegs.discogs;
 
 import io.vertx.core.http.HttpMethod;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import io.vertx.core.http.RequestOptions;
 
 public class Request {
     private final HttpMethod method;
-    private final String url;
-    private final String host;
-    private final int port;
-    private final Map<String, String> headers = new HashMap<>();
+    private final RequestOptions options;
 
-    public Request(HttpMethod method, String url) {
-        this(method, url, 443, "discogs.com");
-    }
-
-    public Request(HttpMethod method, String url, int port, String host) {
+    public Request(HttpMethod method, RequestOptions options) {
         this.method = method;
-        this.url = url;
-        this.port = port;
-        this.host = host;
+        this.options = options;
     }
 
-    public static Request get(String url) {
-        return new Request(HttpMethod.GET, url);
+    public static Request get(RequestOptions options) {
+        return new Request(HttpMethod.GET, options);
     }
 
     public HttpMethod method() {
         return method;
     }
 
-    public String url() {
-        return url;
-    }
-
-    public Request header(String name, String value) {
-        headers.put(name, value);
-        return this;
-    }
-
-    public Set<Map.Entry<String, String>> headers() {
-        return headers.entrySet();
-    }
-
-    public int port() {
-        return 80;
-    }
-
-    public String host() {
-        return "discogs.com";
+    public RequestOptions options() {
+        return options;
     }
 }

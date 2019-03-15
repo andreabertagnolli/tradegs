@@ -1,6 +1,7 @@
 package ndr.brt.tradegs.discogs.pagination;
 
 import io.vertx.core.Future;
+import io.vertx.core.http.RequestOptions;
 import ndr.brt.tradegs.Json;
 import ndr.brt.tradegs.discogs.Request;
 import ndr.brt.tradegs.discogs.Requests;
@@ -25,8 +26,9 @@ public class GetListingPage implements GetPage<ListingPage> {
     @Override
     public Future<ListingPage> apply(String userId, Integer pageNumber) {
         log.info("Request {} inventory page {}", userId, pageNumber);
-        String url = String.format("https://api.discogs.com/users/%s/inventory?page=%d", userId, pageNumber);
-        Request request = Request.get(url).header("User-Agent", "Tradegs/0.1");
+        Request request = Request.get(new RequestOptions()
+                .setHost("api.discogs.com")
+                .setURI(String.format("/users/%s/inventory?page=%d", userId, pageNumber)));
 
         Future<ListingPage> future = Future.future();
         executor.execute(request).setHandler(async -> {
