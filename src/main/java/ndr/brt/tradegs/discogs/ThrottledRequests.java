@@ -4,6 +4,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import org.slf4j.Logger;
@@ -55,15 +56,16 @@ public class ThrottledRequests implements Requests {
             RequestContext context = queue.poll();
             if (context != null) {
                 Request inputRequest = context.request;
+                log.info("Send request: {} {}", inputRequest.method(), inputRequest.options().getURI());
                 httpClient.request(inputRequest.method(), inputRequest.options())
                     .putHeader("User-Agent", "Tradegs/0.1")
+                    .setFollowRedirects(true)
                     .handler(response -> {
                         response.bodyHandler(context.future::complete);
                         checkAndUpdateRateLimit(response);
                     })
                     .end();
 
-                log.info("Send request: {}", inputRequest);
             }
         };
     }
@@ -91,4 +93,5 @@ public class ThrottledRequests implements Requests {
             this.future = future;
         }
     }
+
 }
