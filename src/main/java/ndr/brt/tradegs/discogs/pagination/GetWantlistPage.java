@@ -26,9 +26,7 @@ public class GetWantlistPage implements GetPage<WantlistPage> {
     @Override
     public Future<WantlistPage> apply(String userId, Integer pageNumber) {
         log.info("Request {} wantlist page {}", userId, pageNumber);
-        Request request = Request.get(new RequestOptions()
-                .setHost("api.discogs.com")
-                .setURI(String.format("/users/%s/wants?page=%d", userId, pageNumber)));
+        Request request = Request.get(String.format("/users/%s/wants?page=%d", userId, pageNumber));
 
         Future<WantlistPage> future = Future.future();
         executor.execute(request).setHandler(async -> {

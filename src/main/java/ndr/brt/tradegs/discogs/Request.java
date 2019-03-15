@@ -7,13 +7,20 @@ public class Request {
     private final HttpMethod method;
     private final RequestOptions options;
 
-    public Request(HttpMethod method, RequestOptions options) {
-        this.method = method;
-        this.options = options;
+    public static Request get(String path) {
+        return new Request(HttpMethod.GET, new RequestOptions()
+                .setHost("api.discogs.com")
+                .setURI(path)
+        );
     }
 
     public static Request get(RequestOptions options) {
         return new Request(HttpMethod.GET, options);
+    }
+
+    public Request(HttpMethod method, RequestOptions options) {
+        this.method = method;
+        this.options = options;
     }
 
     public HttpMethod method() {
