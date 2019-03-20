@@ -26,7 +26,8 @@ public class GetListingPage implements GetPage<ListingPage> {
     @Override
     public Future<ListingPage> apply(String userId, Integer pageNumber) {
         log.info("Request {} inventory page {}", userId, pageNumber);
-        Request request = Request.get(String.format("/users/%s/inventory?page=%d", userId, pageNumber));
+        String path = String.format("/users/%s/inventory?page=%d", userId, pageNumber);
+        Request request = Request.get(path);
 
         Future<ListingPage> future = Future.future();
         executor.execute(request).setHandler(async -> {

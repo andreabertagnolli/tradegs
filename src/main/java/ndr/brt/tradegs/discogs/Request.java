@@ -36,4 +36,8 @@ public class Request {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    public String uri() {
+        return options.getURI();
+    }
 }
